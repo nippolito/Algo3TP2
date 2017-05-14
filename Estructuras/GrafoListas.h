@@ -1,5 +1,5 @@
-#ifndef GRAFO_MATRIZ_H
-#define GRAFO_MATRIZ_H
+#ifndef GRAFO_LISTA_H
+#define GRAFO_LISTA_H
 
 #include <iostream>
 #include <vector>
@@ -10,59 +10,41 @@ class GrafoMatriz{
 public:
 	GrafoMatriz(){}
 	//////////////////////////////////////////////////////	
-	GrafoMatriz(vector <vector<int> >& otro){
+	GrafoMatriz(vector <vector<bool> >& otro){
 		m  = otro;
 	}
 	//////////////////////////////////////////////////////	
 	~GrafoMatriz(){}
 	//////////////////////////////////////////////////////
 	void AgregarNodo(){
-		std::vector<int> v;
-		int n = m.size();
-
-		for(int i = 0; i < n; i ++){
-			v.push_back(-1);
-		}
+		std::vector<bool> v;
 		m.push_back(v);
-		for(int i = 0; i < n+1; i++){
-			m[i].push_back(-1);
-		}
 	}
 	//////////////////////////////////////////////////////	
-	void AgregarArista(int x, int y, int p){
-		m[x][y]= p;
-		m[y][x] = p;
+	void AgregarArista(int x, int y){
+		m[x].push_back(y);
+		m[y].push_back(x);
 	}
 	//////////////////////////////////////////////////////
 	bool SonVecinos(int x, int y ){
-		return m[x][y]!=-1;
-	}
-	//////////////////////////////////////////////////////
-	int PesoDe(int x, int y){
-		return m[x][y];
+		int res = false;
+		int n = m[x].size();
+		for(int i = 0 ; i < n; i ++){
+			if (m[x][i] == y) res = true;
+		}
+		return res;
 	}
 	//////////////////////////////////////////////////////
 	void Vecinos(int x, std::vector< int >& res){
-		int size = m.size();
-		for(int i = 0 ; i < size; i ++){
-			if(m[x][i]!=-1) res.push_back(i);
-		}
-	}
-	//////////////////////////////////////////////////////
-	int CantidadNodos(){
-		return m.size();
+		res = m[x];
 	}
 	//////////////////////////////////////////////////////
 	void Mostrar(){
 		int size = m.size();
-		cout << "0[ " ;
-			for(int j = 0 ; j < size-1; j ++){
-				cout << j+1 << " ,  ";
-			}
-		cout << size <<" ]" <<endl;
 		for(int i = 0; i< size; i ++){
 			cout << i+1<<"[ ";
-			for(int j = 0 ; j < size-1; j ++){
+			int n = m[i].size();
+			for(int j = 0 ; j < n; j ++){
 				cout << m[i][j] << " ,  ";
 			}
 			cout << m[i][size-1]<<" ]" <<endl;
@@ -71,9 +53,8 @@ public:
 	//////////////////////////////////////////////////////
 
 
-
 private:
-	std::vector< vector< int > > m;
+	std::vector< vector< bool > > m;
 
 
 };
