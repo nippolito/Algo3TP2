@@ -31,6 +31,12 @@ struct Graph* createGraph(int n, int m)
     return graph;
 }
 
+void addEdge(struct Graph* grafo, int num, int src, int dest, int weight){
+	grafo->edge[num].src = src;
+	grafo->edge[num].dest = dest;
+	grafo->edge[num].weight = weight;
+}
+
 struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma explicado
 	int nuevoN = grafo->n + 1;
 	int nuevoM = grafo->m + grafo->n;
@@ -165,21 +171,10 @@ void Test1(){			// debe dar 2
 	int m = 4;
 	struct Graph* grafo = createGraph(n, m);
 
-	grafo->edge[0].src = 1;
-	grafo->edge[0].dest = 0;
-	grafo->edge[0].weight = 1;
-
-	grafo->edge[1].src = 0;
-	grafo->edge[1].dest = 3;
-	grafo->edge[1].weight = 5;
-
-	grafo->edge[2].src = 3;
-	grafo->edge[2].dest = 2;
-	grafo->edge[2].weight = 1;
-
-	grafo->edge[3].src = 2;
-	grafo->edge[3].dest = 1;
-	grafo->edge[3].weight = 1;
+	addEdge(grafo, 0, 1, 0, 1);
+	addEdge(grafo, 1, 0, 3, 5);
+	addEdge(grafo, 2, 3, 2, 1);
+	addEdge(grafo, 3, 2, 1, 1);
 
 	int h = Ej2(grafo);
 	cout << "La respuesta es: " << h << endl;
@@ -190,33 +185,13 @@ void Test2(){			// debe dar 16
 	int m = 7;
 	struct Graph* grafo = createGraph(n, m);
 
-	grafo->edge[0].src = 0;
-	grafo->edge[0].dest = 1;
-	grafo->edge[0].weight = 30;
-
-	grafo->edge[1].src = 1;
-	grafo->edge[1].dest = 2;
-	grafo->edge[1].weight = 10;
-
-	grafo->edge[2].src = 2;
-	grafo->edge[2].dest = 0;
-	grafo->edge[2].weight = 10;
-
-	grafo->edge[3].src = 2;
-	grafo->edge[3].dest = 3;
-	grafo->edge[3].weight = 100;
-
-	grafo->edge[4].src = 3;
-	grafo->edge[4].dest = 5;
-	grafo->edge[4].weight = 100;
-
-	grafo->edge[5].src = 4;
-	grafo->edge[5].dest = 3;
-	grafo->edge[5].weight = 100;
-
-	grafo->edge[6].src = 4;
-	grafo->edge[6].dest = 5;
-	grafo->edge[6].weight = 100;
+	addEdge(grafo, 0, 0, 1, 30);
+	addEdge(grafo, 1, 1, 2, 10);
+	addEdge(grafo, 2, 2, 0, 10);
+	addEdge(grafo, 3, 2, 3, 100);
+	addEdge(grafo, 4, 3, 5, 100);
+	addEdge(grafo, 5, 4, 3, 100);
+	addEdge(grafo, 6, 4, 5, 100);
 
 	int h = Ej2(grafo);
 	cout << "La respuesta es: " << h << endl;
@@ -226,17 +201,10 @@ void Test3(){		// debe dar 7
 	int n = 5;
 	int m = 3;
 	struct Graph* grafo = createGraph(n, m);
-	grafo->edge[0].src = 2;
-	grafo->edge[0].dest = 4;
-	grafo->edge[0].weight = 5;
 
-	grafo->edge[1].src = 4;
-	grafo->edge[1].dest = 3;
-	grafo->edge[1].weight = 6;
-
-	grafo->edge[2].src = 3;
-	grafo->edge[2].dest = 2;
-	grafo->edge[2].weight = 10;
+	addEdge(grafo, 0, 2, 4, 5);
+	addEdge(grafo, 1, 4, 3, 6);
+	addEdge(grafo, 2, 3, 2, 10);
 
 	int h = Ej2(grafo);
 	cout << "La respuesta es: " << h << endl;
@@ -247,70 +215,41 @@ void Test4(){			// Debe dar 6
 	int m = 10;
 	struct Graph* grafo = createGraph(n, m);
 
-	grafo->edge[0].src = 0;
-	grafo->edge[0].dest = 1;
-	grafo->edge[0].weight = 90;
-
-	grafo->edge[1].src = 1;
-	grafo->edge[1].dest = 2;
-	grafo->edge[1].weight = 1;
-
-	grafo->edge[2].src = 3;
-	grafo->edge[2].dest = 4;
-	grafo->edge[2].weight = 1;
-
-	grafo->edge[3].src = 5;
-	grafo->edge[3].dest = 6;
-	grafo->edge[3].weight = 5;
-
-	grafo->edge[4].src = 6;
-	grafo->edge[4].dest = 7;
-	grafo->edge[4].weight = 5;
-
-	grafo->edge[5].src = 7;
-	grafo->edge[5].dest = 8;
-	grafo->edge[5].weight = 5;
-
-	grafo->edge[6].src = 8;
-	grafo->edge[6].dest = 5;
-	grafo->edge[6].weight = 9;
-
-	grafo->edge[7].src = 9;
-	grafo->edge[7].dest = 10;
-	grafo->edge[7].weight = 5;
-
-	grafo->edge[8].src = 10;
-	grafo->edge[8].dest = 11;
-	grafo->edge[8].weight = 6;
-
-	grafo->edge[9].src = 11;
-	grafo->edge[9].dest = 9;
-	grafo->edge[9].weight = 10;
+	addEdge(grafo, 0, 0, 1, 90);
+	addEdge(grafo, 1, 1, 2, 1);
+	addEdge(grafo, 2, 3, 4, 1);
+	addEdge(grafo, 3, 5, 6, 5);
+	addEdge(grafo, 4, 6, 7, 5);
+	addEdge(grafo, 5, 7, 8, 5);
+	addEdge(grafo, 6, 8, 5, 9);
+	addEdge(grafo, 7, 9, 10, 5);
+	addEdge(grafo, 8, 10, 11, 6);
+	addEdge(grafo, 9, 11, 9, 10);
 
 	int h = Ej2(grafo);
 	cout << "La respuesta es: " << h << endl;	
 }
 
-void Test5(){
-	int n = 4;
-	int m = 3;
-	struct Graph* grafo = createGraph(n, m);
+// void Test5(){			// debe dar Segmentation Fault pero no pasa nada porque no hay pesos que sean 0
+// 	int n = 4;
+// 	int m = 3;
+// 	struct Graph* grafo = createGraph(n, m);
 
-	grafo->edge[0].src = 1;
-	grafo->edge[0].dest = 3;
-	grafo->edge[0].weight = 0;
+// 	grafo->edge[0].src = 1;
+// 	grafo->edge[0].dest = 3;
+// 	grafo->edge[0].weight = 0;
 
-	grafo->edge[1].src = 3;
-	grafo->edge[1].dest = 2;
-	grafo->edge[1].weight = 0;
+// 	grafo->edge[1].src = 3;
+// 	grafo->edge[1].dest = 2;
+// 	grafo->edge[1].weight = 0;
 
-	grafo->edge[2].src = 2;
-	grafo->edge[2].dest = 1;
-	grafo->edge[2].weight = 0;	
+// 	grafo->edge[2].src = 2;
+// 	grafo->edge[2].dest = 1;
+// 	grafo->edge[2].weight = 0;	
 
-	int h = Ej2(grafo);
-	cout << "La respuesta es: " << h << endl;
-}
+// 	int h = Ej2(grafo);
+// 	cout << "La respuesta es: " << h << endl;
+// }
 
 
 int main(){
@@ -318,7 +257,6 @@ int main(){
 	Test2();
 	Test3();
 	Test4();
-	Test5();
 
 	return 0;
 }
