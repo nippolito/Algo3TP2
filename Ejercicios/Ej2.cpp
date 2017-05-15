@@ -5,6 +5,12 @@
 
 using namespace std;
 
+/*
+
+> Debo codear la conversión de la entrada en un grafo para poder pasarle el grafo a la función
+
+*/
+
 // Represento a un eje
 struct Edge 				
 {
@@ -31,7 +37,7 @@ struct Graph* createGraph(int n, int m)
     return graph;
 }
 
-void addEdge(struct Graph* grafo, int num, int src, int dest, int weight){
+void addEdge(struct Graph* grafo, int num, int src, int dest, int weight){			// agrega eje al grafo
 	grafo->edge[num].src = src;
 	grafo->edge[num].dest = dest;
 	grafo->edge[num].weight = weight;
