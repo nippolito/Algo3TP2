@@ -31,6 +31,27 @@ struct Graph* createGraph(int n, int m)
     return graph;
 }
 
+struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma explicado
+	int nuevoN = grafo->n + 1;
+	int nuevoM = grafo->m + grafo->n;
+	struct Graph* graphGhost = createGraph(nuevoN, nuevoM);
+	for(int i = 0; i < grafo->m; i++){
+		graphGhost->edge[i].src = grafo->edge[i].src;
+		graphGhost->edge[i].dest = grafo->edge[i].dest;
+		graphGhost->edge[i].weight = grafo->edge[i].weight;	
+	}
+	int j = 0;
+	for(int i = grafo->m; i < nuevoM; i++){
+		graphGhost->edge[i].src = grafo->n;
+		graphGhost->edge[i].dest = j;
+		graphGhost->edge[i].weight = 0;
+		j++;
+	}
+	return graphGhost;
+}
+
+
+
 
 // suma todos los ejes y le suma 1000 para poder utilizar esto como el "infinito"
 int sumaEjes(struct Graph* grafo){
@@ -50,6 +71,12 @@ int maxPeaje(struct Graph* grafo){
 		}
 	}
 	return res;
+}
+
+void mostrarEjes(struct Graph* grafo){			// función de utilidad para mostrar los ejes
+	for(int i = 0; i < grafo->m; i++){
+		cout << "(" << grafo->edge[i].src << ", " << grafo->edge[i].dest << ")" << endl;
+	}	
 }
 
 void mostrarPesos(struct Graph* grafo){			// al pedo
@@ -112,9 +139,11 @@ int Ej2(struct Graph* grafo){
 	int m = floor((L + R) / 2);
 	bool b;
 
+	struct Graph* graphGhost = addGhostNode(grafo);				// agrego el nodo fantasma al grafo
+
 	// búsqueda binaria + Ford
 	while(L+1 < R){
-		b = fordCicloNegativo(grafo, 0, arr[m]);
+		b = fordCicloNegativo(graphGhost, grafo->n, arr[m]);
 		if(b){
 			R = m;
 		}else{
@@ -122,7 +151,7 @@ int Ej2(struct Graph* grafo){
 		}
 		m = floor((L + R) / 2);
  	}
-	bool h = fordCicloNegativo(grafo, 0, arr[R]);
+	bool h = fordCicloNegativo(graphGhost, grafo->n, arr[R]);
 	if(h){
 		return arr[L];
 	}else{
@@ -193,10 +222,103 @@ void Test2(){			// debe dar 16
 	cout << "La respuesta es: " << h << endl;
 }
 
+void Test3(){		// debe dar 7
+	int n = 5;
+	int m = 3;
+	struct Graph* grafo = createGraph(n, m);
+	grafo->edge[0].src = 2;
+	grafo->edge[0].dest = 4;
+	grafo->edge[0].weight = 5;
+
+	grafo->edge[1].src = 4;
+	grafo->edge[1].dest = 3;
+	grafo->edge[1].weight = 6;
+
+	grafo->edge[2].src = 3;
+	grafo->edge[2].dest = 2;
+	grafo->edge[2].weight = 10;
+
+	int h = Ej2(grafo);
+	cout << "La respuesta es: " << h << endl;
+}
+
+void Test4(){			// Debe dar 6
+	int n = 12;
+	int m = 10;
+	struct Graph* grafo = createGraph(n, m);
+
+	grafo->edge[0].src = 0;
+	grafo->edge[0].dest = 1;
+	grafo->edge[0].weight = 90;
+
+	grafo->edge[1].src = 1;
+	grafo->edge[1].dest = 2;
+	grafo->edge[1].weight = 1;
+
+	grafo->edge[2].src = 3;
+	grafo->edge[2].dest = 4;
+	grafo->edge[2].weight = 1;
+
+	grafo->edge[3].src = 5;
+	grafo->edge[3].dest = 6;
+	grafo->edge[3].weight = 5;
+
+	grafo->edge[4].src = 6;
+	grafo->edge[4].dest = 7;
+	grafo->edge[4].weight = 5;
+
+	grafo->edge[5].src = 7;
+	grafo->edge[5].dest = 8;
+	grafo->edge[5].weight = 5;
+
+	grafo->edge[6].src = 8;
+	grafo->edge[6].dest = 5;
+	grafo->edge[6].weight = 9;
+
+	grafo->edge[7].src = 9;
+	grafo->edge[7].dest = 10;
+	grafo->edge[7].weight = 5;
+
+	grafo->edge[8].src = 10;
+	grafo->edge[8].dest = 11;
+	grafo->edge[8].weight = 6;
+
+	grafo->edge[9].src = 11;
+	grafo->edge[9].dest = 9;
+	grafo->edge[9].weight = 10;
+
+	int h = Ej2(grafo);
+	cout << "La respuesta es: " << h << endl;	
+}
+
+void Test5(){
+	int n = 4;
+	int m = 3;
+	struct Graph* grafo = createGraph(n, m);
+
+	grafo->edge[0].src = 1;
+	grafo->edge[0].dest = 3;
+	grafo->edge[0].weight = 0;
+
+	grafo->edge[1].src = 3;
+	grafo->edge[1].dest = 2;
+	grafo->edge[1].weight = 0;
+
+	grafo->edge[2].src = 2;
+	grafo->edge[2].dest = 1;
+	grafo->edge[2].weight = 0;	
+
+	int h = Ej2(grafo);
+	cout << "La respuesta es: " << h << endl;
+}
+
 
 int main(){
 	Test1();
 	Test2();
+	Test3();
+	Test4();
+	Test5();
 
 	return 0;
 }
