@@ -5,11 +5,7 @@
 
 using namespace std;
 
-/*
 
-> Debo codear la conversión de la entrada en un grafo para poder pasarle el grafo a la función
-
-*/
 
 // Represento a un eje
 struct Edge 				
@@ -43,7 +39,13 @@ void addEdge(struct Graph* grafo, int num, int src, int dest, int weight){			// 
 	grafo->edge[num].weight = weight;
 }
 
-struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma explicado
+void agregaAristaVec(int pos, vector<int>& c1, vector<int>& c2, vector<int>& p, int src, int dest, int weight){
+	c1[pos] = src;
+	c2[pos] = dest;
+	p[pos] = weight;
+}
+
+struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma explicado, copia el grafo y crea uno nuevo
 	int nuevoN = grafo->n + 1;
 	int nuevoM = grafo->m + grafo->n;
 	struct Graph* graphGhost = createGraph(nuevoN, nuevoM);
@@ -61,9 +63,6 @@ struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma exp
 	}
 	return graphGhost;
 }
-
-
-
 
 // suma todos los ejes y le suma 1000 para poder utilizar esto como el "infinito"
 int sumaEjes(struct Graph* grafo){
@@ -97,6 +96,15 @@ void mostrarPesos(struct Graph* grafo){			// al pedo
 	}
 }
 
+
+
+struct Graph* crearGrafo(int cantCiud, int cantRut, vector<int>& c1, vector<int>& c2, vector<int>& p){
+	struct Graph* grafo = createGraph(cantCiud, cantRut);
+	for(int i = 0; i < grafo->m; i++){
+		addEdge(grafo, i, c1[i], c2[i], p[i]);
+	}
+	return grafo;
+}
 
 bool fordCicloNegativo(struct Graph* grafo, int source, int c){
 	int n = grafo->n;
@@ -136,8 +144,6 @@ bool fordCicloNegativo(struct Graph* grafo, int source, int c){
 
 	return b;
 }
-
-
 int Ej2(struct Graph* grafo){
 	int c = maxPeaje(grafo);
 	vector<int> arr(c);
@@ -171,6 +177,39 @@ int Ej2(struct Graph* grafo){
 	}
 }
 
+int Ej2Ent(int cantCiud, int cantRut, vector<int>& c1, vector<int>& c2, vector<int>& p){
+	struct Graph* grafo = crearGrafo(cantCiud, cantRut, c1, c2, p);
+	int c = maxPeaje(grafo);
+	vector<int> arr(c);
+	// inicializo el arreglo, qué fácil que sería en python esto!
+	for(int i = 0; i < c; i++){
+		arr[i] = i + 1;
+	}
+
+	int L = 0;
+	int R = c - 1;
+	int m = floor((L + R) / 2);
+	bool b;
+
+	struct Graph* graphGhost = addGhostNode(grafo);				// agrego el nodo fantasma al grafo
+
+	// búsqueda binaria + Ford
+	while(L+1 < R){
+		b = fordCicloNegativo(graphGhost, grafo->n, arr[m]);
+		if(b){
+			R = m;
+		}else{
+			L = m;
+		}
+		m = floor((L + R) / 2);
+ 	}
+	bool h = fordCicloNegativo(graphGhost, grafo->n, arr[R]);
+	if(h){
+		return arr[L];
+	}else{
+		return arr[R];
+	}
+}
 
 void Test1(){			// debe dar 2
 	int n = 4;
@@ -182,8 +221,20 @@ void Test1(){			// debe dar 2
 	addEdge(grafo, 2, 3, 2, 1);
 	addEdge(grafo, 3, 2, 1, 1);
 
+	vector<int> c1(m);
+	vector<int> c2(m);
+	vector<int> p(m);
+
+	agregaAristaVec(0, c1, c2, p, 1, 0, 1);
+	agregaAristaVec(1, c1, c2, p, 0, 3, 5);
+	agregaAristaVec(2, c1, c2, p, 3, 2, 1);
+	agregaAristaVec(3, c1, c2, p, 2, 1, 1);
+
 	int h = Ej2(grafo);
 	cout << "La respuesta es: " << h << endl;
+
+	int h1 = Ej2Ent(n, m, c1, c2, p);
+	cout << "La respuesta con el otro es: " << h1 << endl;
 }
 
 void Test2(){			// debe dar 16
