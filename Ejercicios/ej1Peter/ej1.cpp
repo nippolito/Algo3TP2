@@ -119,60 +119,22 @@ int DijkstraRutasPremium(int origen, int destino, int n, int k, vector<vector<Ar
 
 int main(){
 	
-
 	while(true){
-		/*vector<vector<Arista> > grafo;
-		vector<Arista> v0;
-		v0.push_back(Arista(0,1,6,true));
-		v0.push_back(Arista(0,2,3,true));
-		v0.push_back(Arista(0,3,10,false));
-		
-		grafo.push_back(v0);
-		vector<Arista> v1;
-		v1.push_back(Arista(1,0,6,true));
-		v1.push_back(Arista(1,5,1,false));
-		grafo.push_back(v1);
-		vector<Arista> v2;
-		v2.push_back(Arista(2,0,3,true));
-		v2.push_back(Arista(2,3,2,false));
-		v2.push_back(Arista(2,4,7,false));
-		v2.push_back(Arista(2,5,1,true));
-		grafo.push_back(v2);
-		vector<Arista> v3;
-		v3.push_back(Arista(3,0,10,false));
-		v3.push_back(Arista(3,2,2,false));
-		v3.push_back(Arista(3,6,5,true));
-		grafo.push_back(v3);
-		vector<Arista> v4;
-		v4.push_back(Arista(4,2,7,false));
-		v4.push_back(Arista(4,5,1,true));
-		grafo.push_back(v4);
-		vector<Arista> v5;
-		v5.push_back(Arista(5,1,1,false));
-		v5.push_back(Arista(5,2,1,true));
-		v5.push_back(Arista(5,6,4,true));
-		grafo.push_back(v5);
-		vector<Arista> v6;
-		v6.push_back(Arista(6,3,5,true));
-		v6.push_back(Arista(6,4,1,true));
-		v6.push_back(Arista(6,5,4,true));
-		grafo.push_back(v6);*/
-		
 		int n ; cin >>n;
 		int r ; cin >> r;
 		if(n == -1 && r == -1) break; // si terminan las entradas.
 		vector<vector<Arista> > grafo (n, vector<Arista>());
 		int o, d, k;
 		cin >> o ; cin >> d; cin >> k ;
-		o = o;
-		d = d; // esto porque se numeran desde 1 en el ejercicio, y yo desde 0 
+		o = o-1;
+		d = d-1; // esto porque se numeran desde 1 en el ejercicio, y yo desde 0 
 
 		for(int i = 0; i < r; i ++ ){
 			int c1,c2,d;
 			bool p;
 			cin >> c1; cin >> c2; cin >> p ; cin >> d;
-			grafo[c1].push_back(Arista(c1, c2, d, p));
-			grafo[c2].push_back(Arista(c2, c1, d, p));
+			grafo[c1-1].push_back(Arista(c1-1, c2-1, d, p));
+			grafo[c2-1].push_back(Arista(c2-1, c1-1, d, p));
 		}
 		
 		int res = DijkstraRutasPremium(o,d,n,k,grafo);
