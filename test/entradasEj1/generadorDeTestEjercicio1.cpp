@@ -17,7 +17,7 @@ int main ()
 
   /* generate secret number between 1 and 10: */
 
-  for(int z = 0; z < 10; z++){
+  for(int z = 0; z < 3; z++){
     n = rand() %  30 + 10;
     int aux = n* (n-1) / 2  -1;
     int m =  rand() % aux + 1;
