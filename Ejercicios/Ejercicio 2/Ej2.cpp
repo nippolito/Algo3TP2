@@ -15,19 +15,21 @@ struct Edge
 struct Graph 			    // n-> Number of vertices, m-> Number of edges
 {
     int n, m;
-    struct Edge* edge;		   // graph is represented as an array of edges.
+    vector<Edge> edge;		   // graph is represented as an array of edges.
 };
 
 // Creates a graph with V vertices and E edges
-struct Graph* createGraph(int n, int m)
+void createGraph(Graph* graph, int n, int m)
 {
-    struct Graph* graph = (struct Graph*) malloc( sizeof(struct Graph) );
     graph->n = n;
     graph->m = m;
  
-    graph->edge = (struct Edge*) malloc( graph->m * sizeof( struct Edge ) );
+    vector<Edge> vec(m);
+
+    graph->edge = vec;
+
+    // graph->edge = (struct Edge*) malloc( graph->m * sizeof( struct Edge ) );
  
-    return graph;
 }
 
 void addEdge(struct Graph* grafo, int num, int src, int dest, int weight){			// agrega eje al grafo
@@ -42,10 +44,10 @@ void agregaAristaVec(int pos, vector<int>& c1, vector<int>& c2, vector<int>& p, 
 	p[pos] = weight;
 }
 
-struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma explicado, copia el grafo y crea uno nuevo
+void addGhostNode(Graph* graphGhost, Graph* grafo){		// agrega el nodo fantasma explicado, copia el grafo y crea uno nuevo
 	int nuevoN = grafo->n + 1;
 	int nuevoM = grafo->m + grafo->n;
-	struct Graph* graphGhost = createGraph(nuevoN, nuevoM);
+	createGraph(graphGhost, nuevoN, nuevoM);
 	for(int i = 0; i < grafo->m; i++){
 		graphGhost->edge[i].src = grafo->edge[i].src;
 		graphGhost->edge[i].dest = grafo->edge[i].dest;
@@ -58,7 +60,6 @@ struct Graph* addGhostNode(struct Graph* grafo){		// agrega el nodo fantasma exp
 		graphGhost->edge[i].weight = 0;
 		j++;
 	}
-	return graphGhost;
 }
 
 // suma todos los ejes y le suma 1000 para poder utilizar esto como el "infinito"
@@ -71,7 +72,7 @@ int sumaEjes(struct Graph* grafo){
 }
 
 // calcula el peaje máximo
-int maxPeaje(struct Graph* grafo){
+int maxPeaje(Graph* grafo){
 	int res = grafo->edge[0].weight;
 	for(int i = 1; i < grafo->m; i++){
 		if(res < grafo->edge[i].weight){
@@ -95,12 +96,11 @@ void mostrarPesos(struct Graph* grafo){			// al pedo
 
 
 
-struct Graph* crearGrafo(int cantCiud, int cantRut, vector<int>& c1, vector<int>& c2, vector<int>& p){
-	struct Graph* grafo = createGraph(cantCiud, cantRut);
+void  crearGrafo(Graph* grafo, int cantCiud, int cantRut, vector<int>& c1, vector<int>& c2, vector<int>& p){
+	createGraph(grafo, cantCiud, cantRut);
 	for(int i = 0; i < grafo->m; i++){
 		addEdge(grafo, i, c1[i], c2[i], p[i]);
 	}
-	return grafo;
 }
 
 bool fordCicloNegativo(struct Graph* grafo, int source, int c){
@@ -193,11 +193,12 @@ int Ej2Testeo(struct Graph* grafo){
 	int m = floor((L + R) / 2);
 	bool b;
 
-	struct Graph* graphGhost = addGhostNode(grafo);				// agrego el nodo fantasma al grafo
+	Graph graphGhost;
+	addGhostNode(&graphGhost, grafo);				// agrego el nodo fantasma al grafo
 
 	// búsqueda binaria + Ford
 	while(L+1 < R){
-		b = fordCicloNegativo(graphGhost, grafo->n, arr[m]);
+		b = fordCicloNegativo(&graphGhost, grafo->n, arr[m]);
 		if(b){
 			R = m;
 		}else{
@@ -205,10 +206,8 @@ int Ej2Testeo(struct Graph* grafo){
 		}
 		m = floor((L + R) / 2);
  	}
-	bool h = fordCicloNegativo(graphGhost, grafo->n, arr[R]);
+	bool h = fordCicloNegativo(&graphGhost, grafo->n, arr[R]);
 
-	free(grafo);
-	free(graphGhost);
 
 	if(h){
 		return arr[L];

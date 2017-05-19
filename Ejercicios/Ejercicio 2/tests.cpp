@@ -25,9 +25,10 @@ void Test1(){			// debe dar 2
 	// int h = Ej2(grafo);
 	// cout << "La respuesta es: " << h << endl;
 
-	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
+	Graph grafo;
+	crearGrafo(&grafo, n, m, c1, c2, p);
 
-	int h1 = Ej2Testeo(grafo);
+	int h1 = Ej2Testeo(&grafo);
 
 	cout << "La respuesta es: " << h1 << endl;	
 }
@@ -55,11 +56,13 @@ void Test2(){			// debe dar 16
 	agregaAristaVec(3, c1, c2, p, 2, 3, 100);	
 	agregaAristaVec(4, c1, c2, p, 3, 5, 100);
 	agregaAristaVec(5, c1, c2, p, 4, 3, 100);
-	agregaAristaVec(6, c1, c2, p, 4, 5, 100);	
+	agregaAristaVec(6, c1, c2, p, 4, 5, 100);
 
-	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
 
-	int h1 = Ej2Testeo(grafo);
+	Graph grafo;
+	crearGrafo(&grafo, n, m, c1, c2, p);
+
+	int h1 = Ej2Testeo(&grafo);
 
 	cout << "La respuesta es: " << h1 << endl;	
 }
@@ -81,9 +84,10 @@ void Test3(){		// debe dar 7
 	agregaAristaVec(1, c1, c2, p, 4, 3, 6);
 	agregaAristaVec(2, c1, c2, p, 3, 2, 10);
 
-	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
+	Graph grafo;
+	crearGrafo(&grafo, n, m, c1, c2, p);
 
-	int h1 = Ej2Testeo(grafo);
+	int h1 = Ej2Testeo(&grafo);
 
 	cout << "La respuesta es: " << h1 << endl;	
 }
@@ -119,9 +123,10 @@ void Test4(){			// Debe dar 6
 	agregaAristaVec(8, c1, c2, p, 10, 11, 6);
 	agregaAristaVec(9, c1, c2, p, 11, 9, 10);
 
-	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
+	Graph grafo;
+	crearGrafo(&grafo, n, m, c1, c2, p);
 
-	int h1 = Ej2Testeo(grafo);
+	int h1 = Ej2Testeo(&grafo);
 
 	cout << "La respuesta es: " << h1 << endl;	
 }
@@ -133,12 +138,14 @@ void mostrarGrafo(int n, int m, vector<int>& c1, vector<int>& c2, vector<int>& p
 	}
 }
 
-void genGraphNigualM(int cantNodos){			// genera el grafo de n nodos con N y M garantizando un ciclo
+void genGraphNigualM(Graph* grafo, int cantNodos){			// genera el grafo de n nodos con N y M mínimos que garanticen un ciclo
 	int n = cantNodos;
 	int m = cantNodos;
 	vector<int> c1(m);
 	vector<int> c2(m);
 	vector<int> p(m);
+
+	cout << "entra" << endl;
 
 	for(int i = 0; i < m; i++){		// crea las aristas obligatorias tq de toda ciudad se pueda viajar a otra
 		c1[i] = i;
@@ -160,48 +167,81 @@ void genGraphNigualM(int cantNodos){			// genera el grafo de n nodos con N y M g
 
 	mostrarGrafo(n, m, c1, c2, p);
 
-	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
+	crearGrafo(grafo, n, m, c1, c2, p);
 
-	int h1 = Ej2Testeo(grafo);
-	cout << "La respuesta es: " << h1 << endl;
+	cout << "asd" << endl;
 }
 
-struct Graph* genGraphComp(int cantNodos){		// genera un digrafo completo de n nodos
-	int n = cantNodos;
-	int m = n * (n - 1);
-	vector<int> c1(m);
-	vector<int> c2(m);
-	vector<int> p(m);
+// struct Graph* genGraphComp(int cantNodos){		// genera un digrafo completo de n nodos
+// 	int n = cantNodos;
+// 	int m = n * (n - 1);
+// 	vector<int> c1(m);
+// 	vector<int> c2(m);
+// 	vector<int> p(m);
 
-	int k = 0;
-	for(int i = 0; i < n; i++){
-		for(int j = 0; j < n; j++){
-			if(j != i){
-				c1[k] = i;
-				c2[k] = j;
-				int x1 = rand() % 100;
-				if(x1 == 0){
-					x1++;
-				}
-				p[k] = x1;
-				k++;
-			}
-		}
-	}
+// 	int k = 0;
+// 	for(int i = 0; i < n; i++){
+// 		for(int j = 0; j < n; j++){
+// 			if(j != i){
+// 				c1[k] = i;
+// 				c2[k] = j;
+// 				int x1 = rand() % 100;
+// 				if(x1 == 0){
+// 					x1++;
+// 				}
+// 				p[k] = x1;
+// 				k++;
+// 			}
+// 		}
+// 	}
 
-	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
+// 	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
 
-	// mostrarGrafo(n, m, c1, c2, p);
+// 	// mostrarGrafo(n, m, c1, c2, p);
 
-	// int h1 = Ej2Testeo(grafo);
-	// cout << "La respuesta es: " << h1 << endl;
-	return grafo;
-}
+// 	// int h1 = Ej2Testeo(grafo);
+// 	// cout << "La respuesta es: " << h1 << endl;
+// 	return grafo;
+// }
+
+// struct Graph* genGraphMitadAristas(int cantNodos){		// genera grafo con (n - 1) * (n / 2) aristas
+// 	int n = cantNodos;
+// 	int m = (n / 2) * (n - 1);
+// 	vector<int> c1(m);
+// 	vector<int> c2(m);
+// 	vector<int> p(m);
+
+// 	int i = 0;
+// 	for(int j = 0; j < n; j++){			// cada una se relaciona con todas las siguientes hasta llegar a n/2, y si no llega empieza a relacionarse con las de atrás
+// 		int k = 0;
+// 		for(int z = j + 1; z < n; z++){
+// 			c1[i] = j;
+// 			c2[i] = z;
+// 			p[i] = rand() % 100;
+// 			i++;
+// 			k++;
+// 		}
+// 		while(k < (n / 2)){
+// 			for(int z = j - 1; z >= 0; z--){
+// 				c1[i] = j;
+// 				c2[i] = z;
+// 				p[i] = rand() % 100;
+// 				i++;
+// 				k++;
+// 			}
+// 		}
+// 	}
+
+// 	mostrarGrafo(n, m, c1, c2, p);
+
+// 	struct Graph* grafo = crearGrafo(n, m, c1, c2, p);
+
+// }
 
 void expGrafos(){			// con grafos completos, para ver qué onda
 	fstream s ("Exp.csv", ios::out);
 
-	s << "cantNod,Res" << endl;
+	s << "cantNod,Res,Tiempo" << endl;
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 
@@ -209,12 +249,31 @@ void expGrafos(){			// con grafos completos, para ver qué onda
 		for(int j = 0; j < 5; j++){
 			s << i;
 			s << ",";
-			struct Graph* grafo = genGraphComp(i);
-			int h1 = Ej2Testeo(grafo);
-			s << h1 << endl;
+
+			Graph grafo;
+			genGraphNigualM(&grafo, i);
+
+			start = std::chrono::system_clock::now();
+			int h1 = Ej2Testeo(&grafo);
+			end = std::chrono::system_clock::now();
+
+			std::chrono::duration<double, std::milli> elapsed_seconds = end-start;
+
+			s << h1;
+			s << ",";
+			s << elapsed_seconds.count() << endl;
+
 		}
 	}
 }
+
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
 
 // void Test5(){			// debe dar Segmentation Fault pero no pasa nada porque no hay pesos que sean 0
 // 	int n = 4;
@@ -240,12 +299,13 @@ void expGrafos(){			// con grafos completos, para ver qué onda
 
 int main(){
 	srand (time(NULL));
-	Test1();
-	Test2();
-	Test3();
-	Test4();
-	// genGraphNigualM(10);
+	// Test1();
+	// Test2();
+	// Test3();
+	// Test4();
+	// // genGraphNigualM(10);
 	// genGraphComp(4);
-	// expGrafos();
+	expGrafos();
+	// struct Graph* grafo = genGraphMitadAristas(4);
 	return 0;
 }
