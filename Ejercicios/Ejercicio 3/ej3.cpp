@@ -30,6 +30,7 @@ typedef pair<int, int> iPair;
 struct Graph
 {
 	int V, E;
+	vector<iPair> solucion;
 										// Edge = < <yaConstruido/NoConstruido, valor de construiccion/removicion>, 
 										//			<nodo origen, nodo destino> >;
 
@@ -44,7 +45,7 @@ struct Graph
 	}
 
 	// Utility function to add an edge
-	void addEdge(int c, int u, int v, int w)
+	void addEdge(int u, int v, int c, int w)
 	{
 		if (c == 1)
 		{
@@ -57,6 +58,10 @@ struct Graph
 
 		if(c < 0 || c > 1){ cout<< "Error! Mal pasaje de parametros!" << endl;}
 
+	}
+	//Devuelve la solucion (aristas del AGM)
+	vector<iPair> dameSolucion(){
+		return solucion;
 	}
 
 	// Function to find MST using Kruskal's
@@ -157,7 +162,11 @@ iPair Graph::kruskalMST()
 			// Current edge will be in the MST
 			// so print it
 			cantAristas++;
-			cout << u << " - " << v << endl;
+			iPair aristaSolucion;
+			aristaSolucion.first = u;
+			aristaSolucion.second = v;
+			this->solucion.push_back(aristaSolucion);
+			//cout << u <<" "<< v <<" ";
 
 			//La arista no me crea ciclos y ya la tenia construida. Costo = 0; 
 
@@ -189,7 +198,11 @@ iPair Graph::kruskalMST()
 			// Current edge will be in the MST
 			// so print it
 			cantAristas++;
-			cout << u << " - " << v << endl;
+			iPair aristaSolucion;
+			aristaSolucion.first = u;
+			aristaSolucion.second = v;
+			this->solucion.push_back(aristaSolucion);
+			//cout << u << " " << v << " ";
 
 			// Update Costo Construccion
 			mst_build += itNotConst->first.second;
@@ -205,28 +218,28 @@ iPair Graph::kruskalMST()
 	return res;
 }
 
-// Driver program to test above functions
+// DESCOMENTAR MAIN PARA ENTREGAR! Tambien modificar para que tome los valores de entrada
+/*
 int main()
 {
-	/* Let us create above shown weighted
-	and unidrected graph */
 	int V = 5, E = 20;
 	Graph g(V, E);
+	
 
 	// making above shown graph. el eje posee 4 parametros (construido/noconstruido; nodo origen; nodo destino; peso )
-	g.addEdge(0, 0, 1, 4);
-	g.addEdge(1, 0, 2, 8);
-	g.addEdge(1, 0, 3, 8);
-	g.addEdge(1, 0, 4, 11);
+	g.addEdge(0, 1, 0, 4);
+	g.addEdge(0, 2, 1, 8);
+	g.addEdge(0, 3, 1, 8);
+	g.addEdge(0, 4, 1, 11);
 
-	g.addEdge(0, 1, 2, 2);
-	g.addEdge(0, 1, 3, 4);
-	g.addEdge(0, 1, 4, 9);
+	g.addEdge(1, 2, 0, 2);
+	g.addEdge(1, 3, 0, 4);
+	g.addEdge(1, 4, 0, 9);
 	
-	g.addEdge(0, 2, 3, 14);
-	g.addEdge(0, 2, 4, 10);
+	g.addEdge(2, 3, 0, 14);
+	g.addEdge(2, 4, 0, 10);
 	
-	g.addEdge(1, 3, 4, 2);
+	g.addEdge(3, 4, 1, 2);
 	
 	cout << "Los ejes de las ciudades son \n";
 	iPair res = g.kruskalMST();
@@ -235,3 +248,4 @@ int main()
 
 	return 0;
 }
+*/
