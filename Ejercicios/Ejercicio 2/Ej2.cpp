@@ -96,7 +96,7 @@ void mostrarPesos(struct Graph* grafo){			// al pedo
 
 
 
-void  crearGrafo(Graph* grafo, int cantCiud, int cantRut, vector<int>& c1, vector<int>& c2, vector<int>& p){
+void crearGrafo(Graph* grafo, int cantCiud, int cantRut, vector<int>& c1, vector<int>& c2, vector<int>& p){
 	createGraph(grafo, cantCiud, cantRut);
 	for(int i = 0; i < grafo->m; i++){
 		addEdge(grafo, i, c1[i], c2[i], p[i]);
