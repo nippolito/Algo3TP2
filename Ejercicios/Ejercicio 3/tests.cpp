@@ -42,7 +42,7 @@ void TestMediciones(){
 			CrearGrafoCompleto(g);
 
 			start = std::chrono::high_resolution_clock::now();
-   			iPair res = g.kruskalMST();
+   			iPair res = g.ej3();
 			finish = std::chrono::high_resolution_clock::now();
 	   		Duracion tiempoEjec = finish - start;
 		   	promedioMili += tiempoEjec.count();

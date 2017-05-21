@@ -34,8 +34,7 @@ struct Graph
 										// Edge = < <yaConstruido/NoConstruido, valor de construiccion/removicion>, 
 										//			<nodo origen, nodo destino> >;
 
-	vector< pair<iPair, iPair> > edgesConstructed; //Ejes ya construidos
-	vector< pair<iPair, iPair> > edgesNotConstructed; //Posibles ejes a construir
+	vector< pair<iPair, iPair> > edges; //Ejes
 
 	// Constructor
 	Graph(int V, int E)
@@ -50,10 +49,10 @@ struct Graph
 		if (c == 1)
 		{
 			w = -w; //Invierto todos los valores. Asi 
-			edgesConstructed.push_back({{c,w}, {u, v}});
+			edges.push_back({{w,c}, {u, v}});
 		} 
 		if (c == 0){
-			edgesNotConstructed.push_back({{c,w}, {u, v}});
+			edges.push_back({{w,c}, {u, v}});
 		}
 
 		if(c < 0 || c > 1){ cout<< "Error! Mal pasaje de parametros!" << endl;}
@@ -67,7 +66,7 @@ struct Graph
 	// Function to find MST using Kruskal's
 	// MST algorithm.
 	//Devuelve el costo y tambien cuantas aristas tiene
-	iPair kruskalMST();
+	iPair ej3();
 };
 
 
@@ -128,7 +127,7 @@ struct DisjointSets
 };
 
 
-iPair Graph::kruskalMST()
+iPair Graph::ej3()
 {
 	int mst_build = 0; // Contador del costo por CONSTRUIR
 	int mst_constructed2Remove = 0; //Contador del costo por REMOVER
@@ -136,23 +135,18 @@ iPair Graph::kruskalMST()
 
 	// Sort edges in increasing order on basis of cost. 
 	//Hay que ver como esta implementado en C++. No supera el n2 asique esta bien
-	sort(edgesConstructed.begin(), edgesConstructed.end());
-	sort(edgesNotConstructed.begin(), edgesNotConstructed.end());
-
-
+	sort(edges.begin(), edges.end());
 
 	// Create disjoint sets
 	DisjointSets ds(V);
 	
-	// Dos iteradores. Uno para cada heap.
-	vector< pair<iPair, iPair> >::iterator itConst;
-	vector< pair<iPair, iPair> >::iterator itNotConst;
+	vector< pair<iPair, iPair> >::iterator it;
 
 	//Los ejes estan ordenados de tal manera que empiezo a armar el AG con los vertices que sean MAS COSTOSOS removerlos.
-	for (itConst = edgesConstructed.begin(); itConst!=edgesConstructed.end(); itConst++) 
+	for (it = edges.begin(); it!=edges.end(); it++) 
 	{
-		int u = itConst->second.first;
-		int v = itConst->second.second;
+		int u = it->second.first;
+		int v = it->second.second;
 		int set_u = ds.find(u);
 		int set_v = ds.find(v);
 		// Check if the selected edge is creating
@@ -162,54 +156,24 @@ iPair Graph::kruskalMST()
 			// Current edge will be in the MST
 			// so print it
 			cantAristas++;
+
 			iPair aristaSolucion;
 			aristaSolucion.first = u;
 			aristaSolucion.second = v;
 			this->solucion.push_back(aristaSolucion);
-			//cout << u <<" "<< v <<" ";
 
-			//La arista no me crea ciclos y ya la tenia construida. Costo = 0; 
-
+			//Si la arista que agrege NO estaba construida, entonces tengo que pagar su costo.
+			if(it->first.second == 0){mst_build += it->first.first;}
 			// Merge two sets
 			ds.merge(set_u, set_v);
 		}else{
 			// SI pertenecen al mismo set, entonces esta arista forma un ciclo.
-			//Al ya estar construida, necesito pagar por removerla.
+			//Si ya estaba construida, necesito pagar por removerla.
 			//La añado al costo de removicion de rutas
-
-			mst_constructed2Remove += (itConst->first.second)*(-1); 
+			if(it->first.second == 1){mst_constructed2Remove += (it->first.first)*(-1);} 
 			//Recordar que tenian peso negativo para que se adapte a la pila.
 		}
 		
-	}
-
-	//Ahora resta agregar los ejes no construidos previamente. Tomo los de menor valor de costo. Aplico kruskal.
-	for (itNotConst=edgesNotConstructed.begin(); itNotConst!=edgesNotConstructed.end(); itNotConst++)
-	{
-		int u = itNotConst->second.first;
-		int v = itNotConst->second.second;
-		int set_u = ds.find(u);
-		int set_v = ds.find(v);
-		// Check if the selected edge is creating
-		// a cycle or not (Cycle is created if u
-		// and v belong to same set)
-		if (set_u != set_v)
-		{
-			// Current edge will be in the MST
-			// so print it
-			cantAristas++;
-			iPair aristaSolucion;
-			aristaSolucion.first = u;
-			aristaSolucion.second = v;
-			this->solucion.push_back(aristaSolucion);
-			//cout << u << " " << v << " ";
-
-			// Update Costo Construccion
-			mst_build += itNotConst->first.second;
-
-			// Merge two sets
-			ds.merge(set_u, set_v);
-		}
 	}
 
 	iPair res;
@@ -218,31 +182,29 @@ iPair Graph::kruskalMST()
 	return res;
 }
 
-// DESCOMENTAR MAIN PARA ENTREGAR! Tambien modificar para que tome los valores de entrada
 /*
 int main()
 {
 	int V = 5, E = 20;
 	Graph g(V, E);
 	
-
 	// making above shown graph. el eje posee 4 parametros (construido/noconstruido; nodo origen; nodo destino; peso )
-	g.addEdge(0, 1, 0, 4);
-	g.addEdge(0, 2, 1, 8);
-	g.addEdge(0, 3, 1, 8);
-	g.addEdge(0, 4, 1, 11);
+	g.addEdge(0, 1, 0, 4); //4
+	g.addEdge(0, 2, 1, 8); //-8
+	g.addEdge(0, 3, 1, 8); //-8
+	g.addEdge(0, 4, 1, 11); //-11
 
-	g.addEdge(1, 2, 0, 2);
-	g.addEdge(1, 3, 0, 4);
-	g.addEdge(1, 4, 0, 9);
+	g.addEdge(1, 2, 0, 2); //2
+	g.addEdge(1, 3, 0, 4); //4
+	g.addEdge(1, 4, 0, 9); //9
 	
-	g.addEdge(2, 3, 0, 14);
-	g.addEdge(2, 4, 0, 10);
+	g.addEdge(2, 3, 0, 14); //14
+	g.addEdge(2, 4, 0, 10); //10
 	
-	g.addEdge(3, 4, 1, 2);
+	g.addEdge(3, 4, 1, 2); //-2
 	
-	cout << "Los ejes de las ciudades son \n";
-	iPair res = g.kruskalMST();
+	//cout << "Los ejes de las ciudades son \n";
+	iPair res = g.Ej3();
 	cout << "\n El costo total es " << res.second;
 	cout << "\n El numero de vertices es " << res.first << endl;
 
