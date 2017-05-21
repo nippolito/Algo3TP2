@@ -189,7 +189,7 @@ iPair Graph::ej3OP()
 {
 	int mst_build = 0; // Contador del costo por CONSTRUIR
 	int mst_constructed2Remove = this->costoDestruirTodas; //Contador del costo por REMOVER
-	cout << mst_constructed2Remove << endl;
+	//cout << mst_constructed2Remove << endl;
 	int cantAristas = 0; //Aristas agregadas
 
 	// Ordena los ejes por costo de construiccion/removicion
@@ -225,10 +225,10 @@ iPair Graph::ej3OP()
 
 			// Merge two sets
 			ds.merge(set_u, set_v);
-		}else{
+		}
 			//Si no estaba construida, no agrego costos. 
 			//Si estaba construida, el costo de removerla ya fue agregado.
-		}
+		
 		
 	}
 
