@@ -23,10 +23,10 @@ Devolver [cantAristas, mst_constructed2Remove+mst_build];
 #include<bits/stdc++.h>
 using namespace std;
 
-// Creating shortcut for an integer pair
+// Pequeña estructura auxiliar, par de enteros.
 typedef pair<int, int> iPair;
 
-// Structure to represent a graph
+// Estructura para representar el grafo
 struct Graph
 {
 	int V, E;
@@ -35,21 +35,25 @@ struct Graph
 										//			<nodo origen, nodo destino> >;
 
 	vector< pair<iPair, iPair> > edges; //Ejes
+	int costoDestruirTodas; //Creado para la funcion ej3OP, (variante optimizada de la original)
 
 	// Constructor
 	Graph(int V, int E)
 	{
 		this->V = V;
 		this->E = E;
+		this->costoDestruirTodas = 0;
 	}
 
-	// Utility function to add an edge
+	// Agregar un eje
 	void addEdge(int u, int v, int c, int w)
 	{
 		if (c == 1)
 		{
+			costoDestruirTodas += w;
 			w = -w; //Invierto todos los valores. Asi 
 			edges.push_back({{w,c}, {u, v}});
+
 		} 
 		if (c == 0){
 			edges.push_back({{w,c}, {u, v}});
@@ -62,18 +66,23 @@ struct Graph
 	vector<iPair> dameSolucion(){
 		return solucion;
 	}
-
-	// Function to find MST using Kruskal's
-	// MST algorithm.
-	//Devuelve el costo y tambien cuantas aristas tiene
+	//Resetea la solucion guardada
+	void resetear();
+	
+	//Ejercicio3, y ejercicio3 OPtimizado
 	iPair ej3();
+	iPair ej3OP();
 };
 
+
+
+void Graph::resetear(){
+	this->solucion.clear();
+}
 
 // Disjoint Sets va a representar las componentes conexas creadas.
 //Aca hay algo de magia, pero leer con detenimiento que las complejidades cierran. (Kruskal lo garantiza)
 //+info: http://www.csl.mtu.edu/cs4321/www/Lectures/Lecture%2019%20-%20Kruskal%20Algorithm%20and%20Dis-joint%20Sets.htm
-
 struct DisjointSets
 {
 	int *parent, *rnk;
@@ -82,40 +91,38 @@ struct DisjointSets
 	// Constructor.
 	DisjointSets(int n)
 	{
-		// Allocate memory
+		// Aloja memoria
 		this->n = n;
 		parent = new int[n+1];
 		rnk = new int[n+1];
 
-		// Initially, all vertices are in
-		// different sets and have rank 0.
+		// Inicialmente, todos los vertices tienen a ellos mismos como padres y su rank es 0 (cantidad de elementos en la comp.conexa)
 		for (int i = 0; i < n; i++)
 		{
 			rnk[i] = 0;
 
-			//every element is parent of itself
+			//Cada uno es padre de si mismo
 			parent[i] = i;
 		}
 	}
 
-	// Find the parent of a node 'u'
+	// Encuentra al padre del nodo u
 	// Path Compression
 	int find(int u)
 	{
-		/* Make the parent of the nodes in the path
+		/* Convierte al padre de los nodos en el camino de u-->padre[u] que apunte al padre[u]
 		from u--> parent[u] point to parent[u] */
 		if (u != parent[u])
 			parent[u] = find(parent[u]);
 		return parent[u];
 	}
 
-	// Union by rank
+	// Union por rank
 	void merge(int x, int y)
 	{
 		x = find(x), y = find(y);
 
-		/* Make tree with smaller height
-		a subtree of the other tree */
+		/* Crea un arbol con altura menor altura. Un subarbol del otro arbol */
 		if (rnk[x] > rnk[y])
 			parent[y] = x;
 		else // If rnk[x] <= rnk[y]
@@ -133,8 +140,7 @@ iPair Graph::ej3()
 	int mst_constructed2Remove = 0; //Contador del costo por REMOVER
 	int cantAristas = 0; //Aristas agregadas
 
-	// Sort edges in increasing order on basis of cost. 
-	//Hay que ver como esta implementado en C++. No supera el n2 asique esta bien
+	//Ordena los ejes por costo de construiccion/removicion O(n*logn)
 	sort(edges.begin(), edges.end());
 
 	// Create disjoint sets
@@ -149,12 +155,9 @@ iPair Graph::ej3()
 		int v = it->second.second;
 		int set_u = ds.find(u);
 		int set_v = ds.find(v);
-		// Check if the selected edge is creating
-		// a cycle or not (Cycle is created if u
-		// and v belong to same set)
+		// Chequea si el eje crea ciclos
+		// (Se crea un ciclo si u y v pertenecen al mismo set)
 		if (set_u != set_v){
-			// Current edge will be in the MST
-			// so print it
 			cantAristas++;
 
 			iPair aristaSolucion;
@@ -172,6 +175,59 @@ iPair Graph::ej3()
 			//La añado al costo de removicion de rutas
 			if(it->first.second == 1){mst_constructed2Remove += (it->first.first)*(-1);} 
 			//Recordar que tenian peso negativo para que se adapte a la pila.
+		}
+		
+	}
+
+	iPair res;
+	res.first = cantAristas;
+	res.second = mst_build + mst_constructed2Remove;
+	return res;
+}
+
+iPair Graph::ej3OP()
+{
+	int mst_build = 0; // Contador del costo por CONSTRUIR
+	int mst_constructed2Remove = this->costoDestruirTodas; //Contador del costo por REMOVER
+	cout << mst_constructed2Remove << endl;
+	int cantAristas = 0; //Aristas agregadas
+
+	// Ordena los ejes por costo de construiccion/removicion
+	sort(edges.begin(), edges.end());
+
+	// Crea disjoint sets
+	DisjointSets ds(V);
+	
+	vector< pair<iPair, iPair> >::iterator it;
+
+	//Los ejes estan ordenados de tal manera que empiezo a armar el AG con los vertices que sean MAS COSTOSOS removerlos.
+	for (it = edges.begin(); it!=edges.end(); it++) 
+	{	
+		if(cantAristas == this->V-1){ it=edges.end(); break;}
+		int u = it->second.first;
+		int v = it->second.second;
+		int set_u = ds.find(u);
+		int set_v = ds.find(v);
+		// Chequea si el eje crea ciclos
+		// (Se crea un ciclo si u y v pertenecen al mismo set
+		if (set_u != set_v){
+			cantAristas++;
+
+			iPair aristaSolucion;
+			aristaSolucion.first = u;
+			aristaSolucion.second = v;
+			this->solucion.push_back(aristaSolucion);
+
+			//Si la arista que agrege NO estaba construida, entonces tengo que pagar su costo.
+			if(it->first.second == 0){mst_build += it->first.first;}
+			//SI la arista que agrege SI estaba construida, entonces no tengo que pagar por removerla. Remuevo su costo de la solucion
+			if(it->first.second == 1){mst_constructed2Remove -= (it->first.first)*(-1);} 
+
+			// Merge two sets
+			ds.merge(set_u, set_v);
+		}else{
+			//Si no estaba construida, no agrego costos. 
+			//Si estaba construida, el costo de removerla ya fue agregado.
 		}
 		
 	}
@@ -204,7 +260,7 @@ int main()
 	g.addEdge(3, 4, 1, 2); //-2
 	
 	//cout << "Los ejes de las ciudades son \n";
-	iPair res = g.Ej3();
+	iPair res = g.ej3OP();
 	cout << "\n El costo total es " << res.second;
 	cout << "\n El numero de vertices es " << res.first << endl;
 
