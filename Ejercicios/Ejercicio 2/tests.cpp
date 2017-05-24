@@ -169,13 +169,13 @@ void genGraphNigualM(Graph* grafo, int cantNodos){			// genera el grafo de n nod
 }
 
 void expGrafosNigualM(){			// testea grafos de N = M, 50 instancias de longitudes entre 2 y 500
-	fstream s ("ExpNIgualM.csv", ios::out);
+	fstream s ("ExpNIgualM2.csv", ios::out);
 
 	s << "cantNod,Tiempo,Tipo" << endl;
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 
-	for(int i = 2; i < 401; i++){		// testea grafos de N = M
+	for(int i = 401; i < 451; i++){		// testea grafos de N = M
 		for(int j = 0; j < 40; j++){
 			s << i;
 			s << ",";
@@ -559,12 +559,12 @@ int main(){
 	srand (time(NULL));
 	// Graph grafo;
 	// genGraphMitadAristas(&grafo, 21);		// como la función tiene como parámetro un puntero a grafo, con & le paso la dirección de memoria donde está alojado ese grafo
-	// expGrafosNigualM();
+	expGrafosNigualM();
 	// expGrafosCompletos();
 	// expGrafosMitadAristas();
 	// expAumentaCMin();
 	// expAumentaCMed();
-	expAumentaCMax();
+	// expAumentaCMax();
 	// Graph grafo;
 	// genGraphMaxC(&grafo, 50);
 
