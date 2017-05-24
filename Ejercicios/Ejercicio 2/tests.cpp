@@ -222,13 +222,13 @@ void genGraphComp(Graph* grafo, int cantNodos){		// genera un digrafo completo d
 }
 
 void expGrafosCompletos(){			// testea grafos completos
-	fstream s ("ExpCompleto.csv", ios::out);
+	fstream s ("ExpCompleto2.csv", ios::out);
 
 	s << "cantNod,Tiempo,Tipo" << endl;
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 
-	for(int i = 2; i < 101; i++){
+	for(int i = 426; i < 451; i++){
 		for(int j = 0; j < 40; j++){
 			s << i;
 			s << ",";
@@ -248,7 +248,6 @@ void expGrafosCompletos(){			// testea grafos completos
 		}
 	}
 }
-
 
 void genGraphMitadAristas(Graph* grafo, int cantNodos){		// genera grafo con (n - 1) * (n / 2) aristas
 	int n = cantNodos;
@@ -313,6 +312,218 @@ void expGrafosMitadAristas(){			// testea grafos con la mitad de aristas
 	}
 }
 
+void genGraphMinC(Graph* grafo, int c){			// genera el grafo con N = M para n = 100 y con pesos máximo c
+	int m = 100;
+	int n = 100;
+	vector<int> c1(m);
+	vector<int> c2(m);
+	vector<int> p(m);
+
+	c1[0] = 0;
+	c2[0] = rand() % (m - 1);
+	p[0] = c;					// esta va a ser la arista de más costo
+
+	for(int i = 1; i < m; i++){		// crea las aristas obligatorias tq de toda ciudad se pueda viajar a otra
+		c1[i] = i;
+		int x1 = rand() % (m - 1);		// rango [0, m - 1]. Luego, de la ciudad i se puede viajar a una al azar
+		c2[i] = x1;		
+		int x2 = rand() % (c - 1);		// el peso de esa arista está en el rango [0, c-1]
+		if(x2 == 0){
+			x2++;
+		}
+		p[i] = x2;
+		if(c2[i] == i){
+			if(c2[i] == (n - 1)){
+				c2[i] = i - 1;
+			}else{
+				c2[i] = i + 1;
+			}
+		}
+	}
+
+	// mostrarGrafo(n, m, c1, c2, p);
+
+	crearGrafo(grafo, n, m, c1, c2, p);
+}
+
+void expAumentaCMin(){			// fijado para N = 100
+	fstream s ("ExpMinC.csv", ios::out);
+
+	s << "cantNod,Tiempo,Tipo" << endl;
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+
+	for(int i = 2; i < 451; i++){		// ciclo para variar el c
+		for(int j = 0; j < 40; j++){
+			s << i;
+			s << ",";
+
+			Graph grafo;
+			genGraphMinC(&grafo, i);
+
+			start = std::chrono::system_clock::now();
+			int h1 = Ej2Testeo(&grafo);
+			end = std::chrono::system_clock::now();
+
+			std::chrono::duration<double, std::milli> elapsed_seconds = end-start;
+
+			s << elapsed_seconds.count();
+			s << ",";
+			s << "MinC" << endl;
+		}
+	}
+}
+
+void genGraphMedC(Graph* grafo, int c){
+	int n = 100;
+	int m = floor((n / 2)) * n;
+	vector<int> c1(m);
+	vector<int> c2(m);
+	vector<int> p(m);
+
+	c1[0] = 0;
+	c2[0] = 1;
+	p[0] = c;					// esta va a ser la arista de más costo
+	int temp = 1;
+	int temp2 = 2;
+	while(temp < floor(n / 2)){		// creo todas las aristas del nodo 0
+		c1[temp] = 0;
+		c2[temp] = temp2;
+		p[temp] = rand() % (c - 1);
+		temp++;
+		temp2++;
+	}
+
+	int i = floor((n / 2));
+	for(int j = 1; j < n; j++){			// creo aristas del resto de los nodos
+		int k = 0;
+		int z = j + 1;
+		while(k < floor(n / 2) && z < n){
+			c1[i] = j;
+			c2[i] = z;
+			p[i] = rand() % (c - 1);
+			i++;
+			k++;
+			z++;
+		}
+		int w = j - 1;
+		while(k < floor(n / 2) && w >= 0){
+			c1[i] = j;
+			c2[i] = w;
+			p[i] = rand() % (c - 1);
+			i++;
+			k++;
+			w--;
+		}
+	}
+
+	// mostrarGrafo(n, m, c1, c2, p);
+
+	crearGrafo(grafo, n, m, c1, c2, p);
+}
+
+void expAumentaCMed(){			// fijado para N = 100
+	fstream s ("ExpMedC.csv", ios::out);
+
+	s << "cantNod,Tiempo,Tipo" << endl;
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+
+	for(int i = 2; i < 451; i++){		// ciclo para variar el c
+		for(int j = 0; j < 40; j++){
+			s << i;
+			s << ",";
+
+			Graph grafo;
+			genGraphMedC(&grafo, i);
+
+			start = std::chrono::system_clock::now();
+			int h1 = Ej2Testeo(&grafo);
+			end = std::chrono::system_clock::now();
+
+			std::chrono::duration<double, std::milli> elapsed_seconds = end-start;
+
+			s << elapsed_seconds.count();
+			s << ",";
+			s << "MedC" << endl;
+		}
+	}
+}
+
+void genGraphMaxC(Graph* grafo, int c){			// fijado para N = 100
+	int n = 100;
+	int m = n * (n - 1);
+	vector<int> c1(m);
+	vector<int> c2(m);
+	vector<int> p(m);
+
+	c1[0] = 0;
+	c2[0] = 1;
+	p[0] = c;
+
+	int temp = 1;
+	for(int temp7 = 2; temp7 < n; temp7++){
+		c1[temp] = 0;
+		c2[temp] = temp7;
+		int temp2 = rand() % (c - 1);
+		if(temp2 == 0){
+			temp2++;
+		}
+		p[temp] = temp2;
+		temp++;
+	}
+
+	int k = n - 1;
+	for(int i = 1; i < n; i++){
+		for(int j = 0; j < n; j++){
+			if(j != i){
+				c1[k] = i;
+				c2[k] = j;
+				int x1 = rand() % (c - 1);
+				if(x1 == 0){
+					x1++;
+				}
+				p[k] = x1;
+				k++;
+			}
+		}
+	}
+
+	// mostrarGrafo(n, m, c1, c2, p);
+
+	crearGrafo(grafo, n, m, c1, c2, p);
+}
+
+void expAumentaCMax(){
+	fstream s ("ExpMaxC.csv", ios::out);
+
+	s << "cantNod,Tiempo,Tipo" << endl;
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+
+	for(int i = 2; i < 451; i++){		// ciclo para variar el c
+		for(int j = 0; j < 40; j++){
+			s << i;
+			s << ",";
+
+			Graph grafo;
+			genGraphMaxC(&grafo, i);
+
+			start = std::chrono::system_clock::now();
+			int h1 = Ej2Testeo(&grafo);
+			end = std::chrono::system_clock::now();
+
+			std::chrono::duration<double, std::milli> elapsed_seconds = end-start;
+
+			s << elapsed_seconds.count();
+			s << ",";
+			s << "MaxC" << endl;
+		}
+	}
+}
+
+
+
 
 // void Test5(){			// debe dar Segmentation Fault pero no pasa nada porque no hay pesos que sean 0
 // 	int n = 4;
@@ -350,7 +561,12 @@ int main(){
 	// genGraphMitadAristas(&grafo, 21);		// como la función tiene como parámetro un puntero a grafo, con & le paso la dirección de memoria donde está alojado ese grafo
 	// expGrafosNigualM();
 	// expGrafosCompletos();
-	expGrafosMitadAristas();
+	// expGrafosMitadAristas();
+	// expAumentaCMin();
+	// expAumentaCMed();
+	expAumentaCMax();
+	// Graph grafo;
+	// genGraphMaxC(&grafo, 50);
 
 	// struct Graph* grafo = genGraphMitadAristas(4);
 	return 0;
