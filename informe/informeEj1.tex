@@ -1,0 +1,216 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={7in, 11in}]{geometry}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{forest}
+
+
+\usepackage{fancyhdr}
+
+
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{sidecap}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{amsmath}
+
+
+%
+
+
+\title{Algoritmos y Estructura de Datos III}
+\author{Gregorio Freidin }
+
+\date{April 2017}
+
+\begin{document}
+
+\section{Ejercicio 1}
+\subsection{Descripción del problema}
+\par{\hspace{1cm}En una provincia de Optilandia las ciudades estan conectadas por rutas bidireccionales. Las rutas no se encuentran en las mejores condiciones, por lo que se decidió mejorar algunas rutas que tendrán categoría premium. Estas rutas premium muchas veces se encuentran en mejor estado y utilizan caminos m\'as directos que suelen ser m\'as cortos que sus alternativas. Todas las rutas tienen asociado la distancia entre las ciudades que une.}
+\medskip
+\par{ Una empresa de log\'istica, Transportex, tiene la tarea de transportar mercader\'ia desde una ciudad de origen hacia una ciudad de destino. Nos pidi\'o que desarrollemos un software que encuentre el mejor camino entre el par de ciudades, es decir, el que recorra la m\'inima distancia.
+El problema que tienen es que, debido a regulaciones provinciales, las empresas de transporte solo pueden pasar por k rutas premium. Esto lo hacen porque que sino habr\'ia que mantener el estado de las rutas con demasiada frecuencia.}
+\medskip
+\par{Escribir un algortimo que tome los datos de las rutas, la m\'axima cantidad de rutas premium que puede tomar un cami\'on, el origen y destino, y calcule cual es el m\'inimo costo de una ruta que salga del origen y llegue al destino cumpliendo con las normativas vigentes. El algoritmo implementado deber\'ia tener una complejidad no peor que $O(n^2.k^2 )$, donde n es la candidad de ciudades y k la m\'axima cantidad de rutas premium que puede utilizar la empresa. En caso de no existir soluci\'on devolver -1.}
+
+\subsection{Solución Propuesta}
+\par{\hspace{1cm}En primer lugar, para almacenar toda la información de entrada, elegimos representar a la provincia como un Grafo donde las ciuadades son los nodos, y las rutas las aristas, cuyo peso asociado es las distancia que tienen asignadas las mismas, y marcando a aquellas rutas que se les haya nombrado como preimum.}
+\medskip
+\par{Luego para resolver el problema, elegimos volcar la información almacenada en un nuevo grafo, con aristas dirigidas, y donde cada nodo va a representar una instancia más específica, almacenando ademas de un objeto, la ciudad, un estado de la misma. En consecuencia, obtenemos una mayor cantidad de nodos.}
+\par{ Clarificando esto útlimo, nuestro nuevo grafo va a tener almacenados $n*k$ nodos, donde cada nodo se va a formar de dos números, el primero diciendo a que ciudad refiere, nuevamente, y el segundo marcando cuantas rutas premium a lo sumo se utilizaron para llegar a dicha ciudad. Ejemplificando, ahora el nodo igual a $(1,5)$ representa que se utilizaron 5 rutas o menos para llegar a la ciudad 1.}
+\medskip
+\par{Al igual que cambiaron nuestro nodos, ahora también debe de cambiar el significado de las aristas, antes representaban directamente  el si habia una ruta que conectaba dos ciudades, c1 y c2, y cual era la distancia de la misma. Y ahora en cambio como los nodos tambien representan estados, las rutas se les suma el valor semántico de si es posible moverse de un estado al otro.} \par{Por lo que sean $n_{i}$ y $n_{j}$ dos nodos cualquiera del nuevo Digrafo, van a estar conectados por una arista dirigida desde $n1$, si y solo si pasa que:
+\begin{itemize}
+\item Las ciudades de ambos nodos están conectadas por una ruta \textsc{no premium} en Optilandia y la cantidad de rutas premium utilizadas para llegar a la ciudad $c_{i}$ es menor o igual a la cantidad de rutas utilizadas para llegar a la ciudad $c_{j}$.
+
+\item Las ciudades de ambos nodos están conectadas por una ruta \textsc{premium} en Optilandia y la cantidad de rutas premium utilizadas para llegar a la ciudad $c_{i}$ es menor estricta a la cantidad de rutas utilizadas para llegar a la ciudad $c_{j}$.
+
+\end{itemize}
+ Esto porque plantear que se puede llegar desde la ciudad $c_{i}$ con $x$ rutas premium utilizadas, a la ciudad $c_{j}$ con $y$ ($y<x$) rutas premium utilizadas, atravez de alguna ruta, es absurdo ya que no hay ruta que contrareste haber utilizado alguna ruta premium en el pasado.}
+\medskip
+\par{Luego entonces a partir de la condición que se cumple cuando tenemos dos nodos, $n$1 y $n$2, conectados por una arista, queremos ver que se cumple también que dos nodos, $n1$ y $n2$, van a estar conectados por un camino simple desde $n1$, si y solo si se puede llegar desde la ciudad $c1$ a la ciudad $c2$ utilizando a lo sumo $rp$ rutas premium, donde $rp$ = $CantidadRutasPremiumUtilizadas(n2) - CantidadRutasPremiumUtilizadas(n1)$}
+\medskip
+\medskip
+\medskip
+\begin{center}
+\begin{tabular}{|c|}
+	\hline
+ 	Vamos a llamar al digrafo $G$, $n_{i}$ a un nodo generico de $G$,\\ donde $c_{i}$ es su respectiva ciudad, y $k_{i}$ su cantidad de rutas premium utilizadas hasta el momento. \\
+	\hline
+\end{tabular}
+
+\end{center}
+\medskip
+
+\par{\textbf{$\Rightarrow)$-} Entonces partimos desde que existe un camino simple en nuestro digrafo que conecte a los nodos $n_{i}$ y $n_{j}$, desde $n_{i}$. Y queremos ver que esto implica entonces que existe una serie de rutas en Optilandia tal que se puede llegar desde $c_{i}$ a $c_{j}$ tal que se utilizan $k_{j}$ - $k_{i}$ rutas premium.}
+\medskip
+\par{Esto lo vamos a probar entonces de manera inductiva:}
+\medskip
+
+\par{$P(i) \equiv $ Si existe un camino simple dentro de $G$, de longitud $i$, que conecte a $n_{i}$ y $n_{j}$, entonces hay una serie de rutas en Optilandia tal que se puede llegar desde $c_{i}$ a $c_{j}$ utilizando $k_{j}$ - $k_{i}$ rutas premium. }
+\medskip
+\medskip
+\par{\textbf{C.B:} $P(1)$. Si existe un camino de longitud 1 que conecte a los nodos $n_{i}$ y $n_{j}$ entonces esto significa que estan conectados por una arista directamente. Y por como están definidas  las conexiones de las aristas en primer lugar es trivial decir que la condición se cumple. }
+\medskip
+\medskip
+\par{\textbf{P.I:} $P(i)$. Si existe un camino $C$ de longitud $i$ que conecte a los nodos $n_{1}$ y $n_{i+1}$, tal que $C$= $\{(n_{1}, n_{2}), ... ,(n_{i}, n_{i+1})\}$, entonces si llamamos a $C_{2}$ = $C-(n_{i}, n_{i+1})$, entonces tenemos que la longitud de $C_{2}$ es ahora de $i-1$, por lo que por \textit{H.I} tenemos que existe una serie de rutas en Optilandia talque se puede llegar desde $c_{1}$ a $c_{i}$ utilizando $k_{i} - k_{1}$ rutas premium. Y también por caso base aplicado a $C_{3}=\{(n_{i}, n_{i+1})\}$ tenemos que sucede lo mismo para ir desde $c_{i}$ a $c_{i+1}$, utilizando  $k_{i+1} - k_{i}$ rutas premium. Por lo que si concatenamos estos caminos, obtenemos un recorrido desde $c_{1}$ a $c_{i+1}$, dentro de Optilandia que utiliza $k_{i} - k_{1}$ +  $k_{i+1} - k_{i}$ = $k_{i+1} - k_{1}$ rutas premium. }
+\medskip
+\medskip
+\medskip
+\medskip
+\medskip
+\medskip
+\par{$\Leftarrow)$- Aca partimos entonces de que si existe un camino dentro de Optilandia tal que se puede llegar desde la ciudad $c_{i}$ hasta la ciudad $c_{j}$ utilizando a los usmo $k$ rutas, entonces, existe un camino dentro de $G$ que une a $n_{i}$ y $n_{j}$, y $k_{j} - k_{j} \leq k $ }
+\par{A esto constructivamente se puede llegar, ya que nos basta simplemente tomar para todas las ciudades que participan en el camino que tenemos desde $c_{i}$ hasta $c_{j}$, sus nodos representativos, que se corresponden con la cantidad de rutas utilizadas. Y por definicion estas conexiónes van a estar en $G$.}
+\medskip
+\medskip
+\medskip
+\medskip
+\medskip
+\medskip
+\par{Ya entonces probado este si y solo si, podemos decir que si existen caminos que vayan desde la ciudad origen, hasta la ciudad destino, utilizando $k$ rutas premium a lo sumo, estos van a estar conectando los nodos $(o,0)$ $(d,k)$, y van a ser los únicos en hacerlo. Por lo que simplemente al correr el algoritmo de Dijkstra dentro del $G$, vamos a obtener el mínimo de todos estos}
+\par{Como agregado queda aclarar que el alogirtmo de Dijkstra se puede correr en $G$ ya que todos los pesos en las aristas son mayores o igual a cero.}
+
+
+\subsection{Implementación}
+\par{Ya explicamos la versión teórica de como vamos a resolver el problema, ahora nos queda mostrar nuestra implementación  para justificar su complegidad teórica.}
+\par{El algoritmo se va a dividir en tres partes:}
+\begin{enumerate}
+\item Crear primer Grafo con los datos de entrada
+\item Generar el Digrafo con información mas especifica en cada nodo
+\item Ejecutar Dijkstra
+\end{enumerate}
+\medskip
+\medskip
+\par{Para representar el primer Grafo con los datos de entrada, elegimos utilizar una Matriz de adyacencias, donde dentro de cada casilla que marca una arista, guardamos una tupla $<int, bool>$ $\rightarrow$ $<PesoDeLaArista,\ EsPremium>$.}
+\medskip
+\par{Por lo que el algoritmo de inicializacion es :}
+\medskip
+
+\newpage
+\begin{algorithm}[h!]
+  \caption{Inicialización}
+  \begin{algorithmic}
+ 	\State $int\ n\ = \ input()$   \Comment {$O(1)$: Obtengo la cantidad de ciudades}
+	\State $int\ r\ = \ input()$		\Comment{$O(1)$: Obtengo la cantidad de rutas}
+   	\State $int\ o\ = \ input()$		\Comment{$O(1)$: Obtengo la ciudad origne}
+  	\State $int\ d\ = \ input()$		\Comment{$O(1)$: Obtengo la ciudad destino}
+   	\State $int\ k\ = \ input()$		\Comment{$O(1)$: Obtengo la cantidad de rutas Preimum permitidas usar}
+   	\State $<int,bool>\ m \ = \ CrearMatriz(n,n)$ \Comment{$O(n^2)$: Creo la matriz para la representación del Grafo}
+   	\For{$i \ \in\ [0..r)$}  \Comment{$O(r)$: Ciclo para ingresar las rutas}
+   		\State $int\ c1\ = \ input()$   \Comment {$O(1)$: Ciudad inicio de ruta}
+		\State $int\ c2\ = \ input()$   \Comment {$O(1)$: Ciudad fin de ruta}
+		\State $bool\ p\ = \ input()$   \Comment {$O(1)$: Si la ruta es premium o no.}
+		\State $int\ d\ = \ input()$   \Comment {$O(1)$: Distancia de la ruta}
+		\medskip
+		\State $m[c1][c2]= <d,p>$		\Comment{$O(1)$}
+		\State $m[c2][c1]= <d,p>$   		\Comment {$O(1)$: Ingreso a ambas ciudades la informacion que se pueden}\\ \Comment{ comunicar con la otra ciudad por la ruta $i$}
+		\medskip
+   	\EndFor
+   
+  \end{algorithmic}
+  \medskip
+  \medskip 
+  \par{\textbf{Complejidad:} de esta seccion es $O(n^2 + r)$ ya que todas las operaciones son primitivas, excepto la creación de la matriz, que por el tamaño se deben de inicializar todas las posiciones que son $n^2$, y $r$ se paga por el ciclo for dentro de la incialización que es cuando se ingresan todos los datos de las rutas}
+\end{algorithm}
+\medskip
+
+\par{Ahora al representar nuestro segundo Grafo, nos encontramos con 2 diferencias respecto al anterior. En primer lugar, tenemos que nuestras aristas ahora son dirigidas, por lo que la arista que una a los nodos $n_{i}$ y $n_{j}$, va encontrarse reproducida solamente en la casilla que tenga como primera coordenada al nodo en que nace.}
+\par{En segundo lugar, no necesitamos ahora guardar dentro de cada arista si representa una ruta premium, esta información pasa al nodo, que maneja la cantidad de rutas premium que hay que asumir como utilizadas.}
+\medskip
+\par{ Ahora tenemos entonces el problema que la ventaja desde el punto de vista que a las aristas no hay que guardarlas más como tuplas, nos trae la consecuencia que hay que encontrar alguna manera de representar la nueva información que maneja un nodo como un indice de nuesta matriz que sea indisinguible.}
+\par{Para ello optamos decir que el indice $i$ = $x*(k+1)$ + $j$ (siendo $ 0\leq x < n $ y $j = i \% (k+1)$ ) representa el nodo $(x,j)$. Donde $x$ es la ciudad que refiere, y $j$ la cantidad de rutas premium que el nodo asume como utilizadas hasta el momento.}
+\medskip
+\par{Nuestro algoritmo de generación del segundo grafo entonce es la siguiente:}
+\medskip
+\begin{algorithm}[h!]
+  \caption{Creación grafo de $n*k$ nodos}
+  \begin{algorithmic}
+ 	\State $int\ m2\ = \ CrearMatriz(n*(k+1), n*(k+1))$  \Comment{$O(n^2*k^2)$}
+ 	\For {$i \ \in \ [0,..,n*k+1)$} 		\Comment{$O(n*k)$}
+		\State $int\ nodo1\ =\ i/(k+1)$ \Comment{$O(1)$: Obtengo la ciudad que refiere} 	
+		\State $int\ cantP1\ =\ i\%(k+1)$ \Comment{$O(1)$: Obtengo sus rutas premium $"$utilizadas$"$}
+		\For {$j\ \in\ [0,..,n*(k+1))$}		\Comment{$O(n*k)$}
+			\State $int\ nodo2\ =\ j/(k+1)$ 	 \Comment{$O(1)$: Lo mismo que antes pero para los vecinos}
+			\State $int\ cantP2\ =\ j \% (k+1)$
+			\If{$CumplenCondicionParaAristaDirigida(nodo1,nodo2)$}  \Comment{$O(1)$}
+				\State $m2[i][j]= DistanciaDeRuta(m[nodo1][nodo2])$ \Comment{$O(1)$} 
+			\Else
+				\State $m2[i][j] = -1$			\Comment{$O(1)$: Si no existe ruta le asigno -1, que es un valor inválido}\\ \Comment{dentro de las distancias de las rutas}				
+			\EndIf
+		\EndFor
+ 	\EndFor
+  \end{algorithmic}
+  \medskip
+  \medskip
+  \par{\textbf{Complejidad:} $O(n^2*k^2)$. En primer lugar se ejecuta la operación de instanciar una matriz de tamaño $n^2*k^2$. Y luego el resto de las operaciones son de complegidad $O(1)$, que las ejecutamos dentro de una unionde ciclos donde cada uno se completa en $O(n*k)$ pasos, por lo que al haber uno dentro del otro nos da una complejidad de $O(n^2*k^2)$} 
+
+\end{algorithm}
+\medskip
+
+\par{Una vez ya representado nuestro segundo Grafo, el cual ya explicamos la propiedad teórica que tenía, nos falta ejecutar el algoritmo de dijkstra buscando el mejor camino desde el nodo, ($o$,0), al nodo ($d$,$k$).}
+\par{ La idea principal de como ejecutar esto es declarar un arreglo de tuplas $<int,bool>$, llamado $distancias$, de tamaño $(n*(k+1))$ donde cada indice representa al mismo nodo que ya explicamos para la matriz. Y vamos a ir guardando en cada posicion, la distancia parcial del nodo que refiere su indice, hacia el nodo $(o,0)$, y si ya ocurrió la iteración del algoritmo de Dijkstra donde fue visitado dicho nodo. Que por invariante es que ya se obtuvo la distancia óptima.}
+\par{Esto se va a ejecutar hasta que se haya logrado visitar a todos los nodos de los cuales se puede llegar desde $(o,0)$, o hasta lograr iniciar la iteración del algoritmo de Dijkstra en el cual nos paramos en el nodo $(d,k)$.}
+\par{Para eso ejecutamos la siguiente implementación:}
+\\
+\medskip
+\begin{algorithm}[h!]
+  \caption{Algoritmo de Dijkstra}
+\begin{algorithmic}
+	\State $int \  min \ = \ -1$
+	\State $<int,bool> \ distancias \ = \ Arreglo<int,bool> [n*(k+1)]$ \Comment{$O(n*k)$}
+	\State $distancias[o *(k+1) + 0].first\ =\ 0 $ \Comment{$O(1)$ : Al nodo $(o,0)$ le asignamos distancia 0, ya que esta es trivial}\\ \Comment{Y es de donde vamos a iniciar el algoritmo }
+	\For {$int\ z\ =\ 0\ ;\ z\ <\ n*(k+1);\ z ++$}
+		 \State $min \ = MinimoDeLosNoVisitados(distancias,\ n*(k+1))$ \Comment{$O(n*(k+1))$: Le asigno a min el indice}\\ \Comment{ que representa alnodo que cumple que tiene la distancia}\\ \Comment{ minima dentro del arreglo de distancias, y no fue visitado aún.}
+		\If{$min == -1$} 
+		\State $break$ \Comment{Si no se obtuvo un indice válido es que ya recorri }\\ \Comment{toda la componente conexa de la cual forma parte el nodo $(o,0)$}
+		\ElsIf {$min\ == \ d*(k+1)+k$}
+		\State $break$ \Comment{Si llegue al nodo que buscaba}
+		\EndIf	
+		\\
+		\For{$int\ j\ =\ 0;\ j\ <\ (n*(k+1));\ j++$} \Comment{Si tengo que seguir el algoritmo}\\ \Comment{ actualizo los vecinos del nodo $min$}
+		
+			\If{$SonVecinos(min, j, m2)$} \Comment{$O(1)$}
+				\If{$SiMejoroElCaminoHaciaJ(min,j,distancais)$}
+					\State $distancias[j].first\ = \ distancias[min]\ +\ m2[min][j]$ \Comment{$O(1)$: Actualizo la distancia de J}\\ \Comment{en el arreglo distanciaas}				
+				\EndIf
+			\EndIf		
+		\EndFor
+		\medskip
+		\If{$min\ ==  \ -1$} \Comment{Si $min$ es un indice inválido}
+		\State $return -1$ \Comment{No hay solución al problema}
+		\Else
+		\State $return min$
+		\EndIf
+	\EndFor
+ 	
+\end{algorithmic}
+ \par{\textbf{Complejidad:} $O(n^2*k^2)$. En primer lugar ejecutamos una incialización de un arreglo de tamaño $n*(k+1)$, y luego ejecutamos un ciclo For que en cada iteración va a tratar a un nodo de este arreglo, que no haya visitado anterior mente, con lo que a lo sumo se repite $n*(k+1)$ veces. Y dentro de cada iteración ejecutamos dos operación de complejidad $O(n*(k+1))$. Por lo que en total el algoritmo muestra una complejidad de $O(n*(k+1)\  *\ 2*n*(k+1))$ = $O(n*(k+1))$} 
+\end{algorithm}
+
+\end{document}
