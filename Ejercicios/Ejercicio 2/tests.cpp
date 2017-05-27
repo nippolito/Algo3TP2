@@ -522,6 +522,45 @@ void expAumentaCMax(){
 	}
 }
 
+void funcionNcuboLogcien(int n){
+	int temp = 0;
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++){
+			for(int k = 0; k < n; k++){
+				int t = 100;
+				while(t < 12800){
+					t = t * 2;
+				}
+				temp++;
+			}
+		}
+	}
+}
+
+void expFuncionComplej(){
+	fstream s ("FuncionComplej.csv", ios::out);
+
+	s << "cantNod,Tiempo,Tipo" << endl;
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+
+	for(int i = 2; i < 451; i++){		// ciclo para variar el c
+		for(int j = 0; j < 40; j++){
+			s << i;
+			s << ",";
+
+			start = std::chrono::system_clock::now();
+			funcionNcuboLogcien(i);
+			end = std::chrono::system_clock::now();
+
+			std::chrono::duration<double, std::milli> elapsed_seconds = end-start;
+
+			s << elapsed_seconds.count();
+			s << ",";
+			s << "FuncionComplej" << endl;
+		}
+	}
+}
 
 
 
@@ -567,6 +606,7 @@ int main(){
 	// expAumentaCMax();
 	// Graph grafo;
 	// genGraphMaxC(&grafo, 50);
+	// expFuncionComplej();
 
 	// struct Graph* grafo = genGraphMitadAristas(4);
 	return 0;

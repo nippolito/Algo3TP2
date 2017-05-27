@@ -19,6 +19,7 @@ def expNyM():
 	df1 = pd.read_csv('ExpCompleto.csv')
 	df2 = pd.read_csv('ExpNIgualM.csv')
 	df3 = pd.read_csv('ExpMitadAristas.csv')
+	dfcomplej = pd.read_csv('FuncionComplej.csv')
 
 	enes = range(2, 451)
 
@@ -36,9 +37,13 @@ def expNyM():
 	mitadAristas_count = mitadAristas.groupby('cantNod').mean()
 	List3 = mitadAristas_count.Tiempo_ms.tolist()
 
-	dataf1 = pd.DataFrame({'T1': List1, 'T3': List2, 'T2': List3, 'CantVertices': enes})
+	complej = dfcomplej[dfcomplej['Tipo'] == 'FuncionComplej']
+	complej_count = complej.groupby('cantNod').mean() * 18
+	List4 = complej_count.Tiempo_ms.tolist()
+
+	dataf1 = pd.DataFrame({'T1': List1, 'T3': List2, 'T2': List3, 'O(n^3 log(100))': List4, 'CantVertices': enes})
 	dataf1.astype(float)
-	dataf1.plot(title='', x='CantVertices')
+	dataf1.plot(title='', x='CantVertices', logy=True)
 	# dataf1.plot(title='', x='CantVertices', logy=True, kind='scatter', colorbar=True)
 	plt.ylabel('Tiempo en ms')
 	plt.xlabel('Cantidad de nodos entrada')
@@ -75,8 +80,8 @@ def expC():
 
 	plt.show()	
 
-# expNyM()
-expC()
+expNyM()
+# expC()
 
 
 
