@@ -238,7 +238,7 @@ iPair Graph::ej3OP()
 	return res;
 }
 
-
+/*
 int main()
 {
 	int n;
@@ -266,4 +266,4 @@ int main()
 	}
 	
 	return 0;
-}
+}*/

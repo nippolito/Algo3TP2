@@ -60,16 +60,16 @@ void TestMedicionesEj3(){
     auto finish = std::chrono::high_resolution_clock::now();
 
     stringstream ss;
-    ss <<  "Muestreo_Ej3" <<".txt";
+    ss <<  "Muestreo_Ej3" <<".csv";
 
 	ofstream file( ss.str() );
     if ( !file )
 	{
         cerr << "Error: failed to create file " << ss.str() << '\n';
  	}
-
+    file << "cantNod,Tiempo,Tipo" << endl;
     int cantMuestras = 100;
-	for (int i = 2; i < 200; ++i)
+	for (int i = 2; i < 300; ++i)
 	{
 		typedef std::chrono::duration<double, std::milli> Duracion;
 		double promedioMili = 0;
@@ -86,7 +86,7 @@ void TestMedicionesEj3(){
 
 		}
 		promedioMili = promedioMili/cantMuestras;
-		file << i << " " << promedioMili << "\n";
+		file << i << "," << promedioMili << ",Original\n";
 		cout << "Voy por cantidad de nodos: " << i << ". El promedio fue: " << promedioMili << endl;
 	}
 	
@@ -99,16 +99,16 @@ void TestMedicionesEj3Op()
     auto finish = std::chrono::high_resolution_clock::now();
 
     stringstream ss;
-    ss <<  "Muestreo_Ej3Op" <<".txt";
+    ss <<  "Muestreo_Ej3Op" <<".csv";
 
 	ofstream file( ss.str() );
     if ( !file )
 	{
         cerr << "Error: failed to create file " << ss.str() << '\n';
  	}
-
+ 	file << "cantNod,Tiempo,Tipo" << endl;
     int cantMuestras = 100;
-	for (int i = 2; i < 200; ++i)
+	for (int i = 2; i < 300; ++i)
 	{
 		typedef std::chrono::duration<double, std::milli> Duracion;
 		double promedioMili = 0;
@@ -125,7 +125,7 @@ void TestMedicionesEj3Op()
 
 		}
 		promedioMili = promedioMili/cantMuestras;
-		file << i << " " << promedioMili << "\n";
+		file << i << "," << promedioMili << ",Optimizada\n";
 		cout << "Voy por cantidad de nodos: " << i << ". El promedio fue: " << promedioMili << endl;
 	}
 }
@@ -135,19 +135,25 @@ void TestMedicionesAgmHecho()
 	auto start = std::chrono::high_resolution_clock::now();
     auto finish = std::chrono::high_resolution_clock::now();
 
-    stringstream ss;
-    ss <<  "Muestreo_Ej3_Agm" <<".txt";
+    stringstream ss1, ss2;
+    ss1 <<  "Muestreo_Ej3_Agm" <<".csv";
+    ss2 <<  "Muestreo_Ej3_AgmOp" <<".csv";
 
-    ofstream fileOp( ss.str() + "Op" );
-
-	ofstream file( ss.str() );
+    ofstream fileOp( ss2.str()  );
+    if ( !fileOp )
+	{
+        cerr << "Error: failed to create file " << ss2.str() << '\n';
+ 	}
+	ofstream file( ss1.str() );
     if ( !file )
 	{
-        cerr << "Error: failed to create file " << ss.str() << '\n';
+        cerr << "Error: failed to create file " << ss1.str() << '\n';
  	}
+ 	file << "cantNod,Tiempo,Tipo" << endl;
+ 	fileOp << "cantNod,Tiempo,Tipo" << endl;
 
     int cantMuestras = 100;
-	for (int i = 2; i < 200; ++i)
+	for (int i = 2; i < 300; ++i)
 	{
 		typedef std::chrono::duration<double, std::milli> Duracion;
 		double promedioMili = 0;
@@ -172,18 +178,56 @@ void TestMedicionesAgmHecho()
 
 		}
 		promedioMili = promedioMili/cantMuestras;
-		file << i << " " << promedioMili << "\n";
+		file << i << "," << promedioMili << ",OriginalConAGM" <<"\n";
 		promedioMiliOp = promedioMiliOp/cantMuestras;
-		fileOp << i << " " << promedioMiliOp << "\n";
+		fileOp << i << "," << promedioMiliOp << ",OptimizadaConAGM" <<"\n";
 		
 		cout << "Voy por cantidad de nodos: " << i << ". Los promedios fueron: " << promedioMili << " y " << promedioMiliOp << endl;
 	}
 }
 
+void funcionNcuboLogcien(int n){
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++){
+			int t = 2;
+			while(t < n){
+				t = t * 2;
+			}
+		}
+	}
+}
+
+void expFuncionComplej(){
+	fstream s ("FuncionComplej.csv", ios::out);
+
+	s << "cantNod,Tiempo,Tipo" << endl;
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+
+	for(int i = 2; i < 300; i++){		// ciclo para variar el c
+		for(int j = 0; j < 40; j++){
+			s << i;
+			s << ",";
+
+			start = std::chrono::system_clock::now();
+			funcionNcuboLogcien(i);
+			end = std::chrono::system_clock::now();
+
+			std::chrono::duration<double, std::milli> elapsed_seconds = end-start;
+
+			s << elapsed_seconds.count();
+			s << ",";
+			s << "FuncionComplej" << endl;
+		}
+	}
+}
+
+
 int main()
 {
-	//TestMedicionesEj3();
-	//TestMedicionesEj3Op();
+	TestMedicionesEj3();
+	TestMedicionesEj3Op();
 	TestMedicionesAgmHecho();
+	expFuncionComplej();
 	return 0;
 }
