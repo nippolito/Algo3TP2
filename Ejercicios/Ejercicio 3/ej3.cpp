@@ -238,32 +238,32 @@ iPair Graph::ej3OP()
 	return res;
 }
 
-/*
+
 int main()
 {
-	int V = 5, E = 20;
-	Graph g(V, E);
-	
-	// making above shown graph. el eje posee 4 parametros (construido/noconstruido; nodo origen; nodo destino; peso )
-	g.addEdge(0, 1, 0, 4); //4
-	g.addEdge(0, 2, 1, 8); //-8
-	g.addEdge(0, 3, 1, 8); //-8
-	g.addEdge(0, 4, 1, 11); //-11
+	int n;
+	cin >> n;
 
-	g.addEdge(1, 2, 0, 2); //2
-	g.addEdge(1, 3, 0, 4); //4
-	g.addEdge(1, 4, 0, 9); //9
-	
-	g.addEdge(2, 3, 0, 14); //14
-	g.addEdge(2, 4, 0, 10); //10
-	
-	g.addEdge(3, 4, 1, 2); //-2
-	
-	//cout << "Los ejes de las ciudades son \n";
-	iPair res = g.ej3OP();
-	cout << "\n El costo total es " << res.second;
-	cout << "\n El numero de vertices es " << res.first << endl;
+	while (n != -1){
+		int aristas = n*(n-1)/2;
+		Graph g(n, aristas);
 
+		int c1, c2, p;
+		bool e;
+		for (int i = 0; i < aristas; ++i)
+		{
+			cin >> c1; cin >> c2; cin >> e; cin >> p;
+			g.addEdge(c1-1, c2-1, e, p);
+		}
+		iPair res = g.ej3();
+		cout << res.second << " " << res.first  << " ";
+		for (int i = 0; i < res.first; ++i)
+		{
+			cout << g.solucion[i].first + 1 << " " << g.solucion[i].second + 1 << " ";
+		}
+		
+		cin >> n;
+	}
+	
 	return 0;
 }
-*/

@@ -182,8 +182,8 @@ void TestMedicionesAgmHecho()
 
 int main()
 {
-	TestMedicionesEj3();
-	TestMedicionesEj3Op();
+	//TestMedicionesEj3();
+	//TestMedicionesEj3Op();
 	TestMedicionesAgmHecho();
 	return 0;
 }
