@@ -192,15 +192,16 @@ void funcionNcuboLogcien(int n){
 		for(int j = 0; j < n; j++){
 			int t = (int) (100 * log (n) + 0.5);
 			int k = 0;
+			cout << t << endl;
 			while(k < t){
-				temp++;
+				k++;
 			}
 		}
 	}
 }
 
 void expFuncionComplej(){
-	fstream s ("FuncionComplej.csv", ios::out);
+	fstream s ("FuncionComplej_2.csv", ios::out);
 
 	s << "cantNod,Tiempo,Tipo" << endl;
 
@@ -227,9 +228,9 @@ void expFuncionComplej(){
 
 int main()
 {
-	TestMedicionesEj3();
-	TestMedicionesEj3Op();
-	TestMedicionesAgmHecho();
+	// TestMedicionesEj3();
+	// TestMedicionesEj3Op();
+	// TestMedicionesAgmHecho();
 	expFuncionComplej();
 	return 0;
 }

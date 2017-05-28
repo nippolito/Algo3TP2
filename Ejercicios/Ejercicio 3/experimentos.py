@@ -16,11 +16,11 @@ import math
 # pd.set_option('display.max_columns', 60)
 
 def expPeter():
-	df1 = pd.read_csv('Muestreo_Ej3.csv')
-	df2 = pd.read_csv('Muestreo_Ej3_Agm.csv')
-	df3 = pd.read_csv('Muestreo_Ej3_AgmOp.csv')
-	df4 = pd.read_csv('Muestreo_Ej3Op.csv')
-	dfcomplej = pd.read_csv('FuncionComplej.csv')
+	df1 = pd.read_csv('Muestreo_Ej3_2.csv')
+	df2 = pd.read_csv('Muestreo_Ej3_Agm_2.csv')
+	df3 = pd.read_csv('Muestreo_Ej3_AgmOp_2.csv')
+	df4 = pd.read_csv('Muestreo_Ej3Op_2.csv')
+	dfcomplej = pd.read_csv('FuncionComplej_2.csv')
 
 	enes = range(2, 300)
 
@@ -43,7 +43,7 @@ def expPeter():
 	List4 = Ej3AgmOp_count.Tiempo.tolist()
 
 	complej = dfcomplej[dfcomplej['Tipo'] == 'FuncionComplej']
-	complej_count = complej.groupby('cantNod').mean() * 46
+	complej_count = complej.groupby('cantNod').mean() / 8
 	ListComp = complej_count.Tiempo.tolist()
 
 	dataf1 = pd.DataFrame({'S1': List1, 'S2': List2, 'S3': List3, 'S4': List4, 'O(n^2 log(n))': ListComp, 'CantVertices': enes})
@@ -56,7 +56,6 @@ def expPeter():
 	plt.show()
 
 expPeter()
-
 
 
 
