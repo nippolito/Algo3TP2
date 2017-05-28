@@ -55,7 +55,62 @@ def expPeter():
 
 	plt.show()
 
-expPeter()
+def expPeterdos():
+	df1 = pd.read_csv('Muestreo_Ej3_2.csv')
+	df2 = pd.read_csv('Muestreo_Ej3_Agm_2.csv')
+	df3 = pd.read_csv('Muestreo_Ej3_AgmOp_2.csv')
+	df4 = pd.read_csv('Muestreo_Ej3Op_2.csv')
+	dfcomplej = pd.read_csv('FuncionComplej_2.csv')
+
+	enes = range(2, 300)
+
+	# consumo = [(math.pow(n, 3) * math.log(100, 2)) for n in enes]
+
+	Ej3Comun = df1[df1['Tipo'] == 'Original']
+	Ej3Comun_count = Ej3Comun.groupby('cantNod').mean()
+	List1 = Ej3Comun_count.Tiempo.tolist()
+
+	Ej3Op = df4[df4['Tipo'] == 'Optimizada']
+	Ej3Op_count = Ej3Op.groupby('cantNod').mean()
+	List2 = Ej3Op_count.Tiempo.tolist()
+
+	Ej3Agm = df2[df2['Tipo'] == 'OriginalConAGM']
+	Ej3Agm_count = Ej3Agm.groupby('cantNod').mean()
+	List3 = Ej3Agm_count.Tiempo.tolist()
+
+	Ej3AgmOp = df3[df3['Tipo'] == 'OptimizadaConAGM']
+	Ej3AgmOp_count = Ej3AgmOp.groupby('cantNod').mean()
+	List4 = Ej3AgmOp_count.Tiempo.tolist()
+
+	complej = dfcomplej[dfcomplej['Tipo'] == 'FuncionComplej']
+	complej_count = complej.groupby('cantNod').mean() / 8
+	ListComp = complej_count.Tiempo.tolist()
+
+	# dataf1 = pd.DataFrame({'S1': List1, 'O(n^2 log(n))': ListComp, 'CantVertices': enes})
+	# dataf1.astype(float)
+	# dataf1.plot(title='', x='CantVertices', logy=True)
+	# # dataf1.plot(title='', x='CantVertices', logy=True, kind='scatter', colorbar=True)
+	# plt.ylabel('Tiempo en ms')
+	# plt.xlabel('Cantidad de nodos entrada')
+
+	dataf2 = pd.DataFrame({'S1': List1, 'S2': List2, 'CantVertices': enes})
+	dataf2.astype(float)
+	dataf2.plot(title='', x='CantVertices')
+	# dataf1.plot(title='', x='CantVertices', logy=True, kind='scatter', colorbar=True)
+	plt.ylabel('Tiempo en ms')
+	plt.xlabel('Cantidad de nodos entrada')
+
+	dataf2 = pd.DataFrame({'S3': List3, 'S4': List4, 'CantVertices': enes})
+	dataf2.astype(float)
+	dataf2.plot(title='', x='CantVertices')
+	# dataf1.plot(title='', x='CantVertices', logy=True, kind='scatter', colorbar=True)
+	plt.ylabel('Tiempo en ms')
+	plt.xlabel('Cantidad de nodos entrada')
+
+	plt.show()
+
+
+expPeterdos()
 
 
 
