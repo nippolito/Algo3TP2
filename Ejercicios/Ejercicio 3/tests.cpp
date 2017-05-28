@@ -187,11 +187,13 @@ void TestMedicionesAgmHecho()
 }
 
 void funcionNcuboLogcien(int n){
+	int temp = 0;
 	for(int i = 0; i < n; i++){
 		for(int j = 0; j < n; j++){
-			int t = 2;
-			while(t < n){
-				t = t * 2;
+			int t = (int) (100 * log (n) + 0.5);
+			int k = 0;
+			while(k < t){
+				temp++;
 			}
 		}
 	}
