@@ -4,6 +4,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import random
+import math
 
 # from pylab import *
 # rcParams['figure.figsize'] = 15,5
@@ -14,27 +15,38 @@ import random
 # pd.set_option('display.width', 5000)
 # pd.set_option('display.max_columns', 60)
 
-def main():
-	df = pd.read_csv('../Testing/salidasSinPodaTiempo.csv')
-	df1 = pd.read_csv('../')
-	df2 = pd.read_csv('../')
-	df3 = pd.read_csv('../')
+def expPeter():
+	df1 = pd.read_csv('Muestreo_Ej3.csv')
+	df2 = pd.read_csv('Muestreo_Ej3_Agm.csv')
+	df3 = pd.read_csv('Muestreo_Ej3_AgmOp.csv')
+	df4 = pd.read_csv('Muestreo_Ej3Op.csv')
+	dfcomplej = pd.read_csv('FuncionComplej.csv')
 
-	enes = range(2, 401)
+	enes = range(2, 300)
 
-	NigualM = df[df['Tipo'] == 'NigualM']
-	NigualM_count = NigualM.groupby('').mean()
-	List1 = MigualM_count.Tiempo_ms.tolist()
+	# consumo = [(math.pow(n, 3) * math.log(100, 2)) for n in enes]
 
-	Completo = df[df['Tipo'] == 'Completo']
-	Completo_count = Completo.groupby('').mean()
-	List2 = Completo_count.Tiempo_ms.tolist()
+	Ej3Comun = df1[df1['Tipo'] == 'Original']
+	Ej3Comun_count = Ej3Comun.groupby('cantNod').mean()
+	List1 = Ej3Comun_count.Tiempo.tolist()
 
-	mitadAristas = df[df['Tipo'] == '']
-	mitadAristas_count = mitadAristas.groupby('').mean()
-	List3 = mitadAristas_count.Tiempo_ms.tolist()
+	Ej3Op = df4[df4['Tipo'] == 'Optimizada']
+	Ej3Op_count = Ej3Op.groupby('cantNod').mean()
+	List2 = Ej3Op_count.Tiempo.tolist()
 
-	dataf1 = pd.DataFrame({'NigualM': List1, 'Completo': List2, 'Mitad de Aristas': List3, 'CantVertices': enes})
+	Ej3Agm = df2[df2['Tipo'] == 'OriginalConAGM']
+	Ej3Agm_count = Ej3Agm.groupby('cantNod').mean()
+	List3 = Ej3Agm_count.Tiempo.tolist()
+
+	Ej3AgmOp = df3[df3['Tipo'] == 'OptimizadaConAGM']
+	Ej3AgmOp_count = Ej3AgmOp.groupby('cantNod').mean()
+	List4 = Ej3AgmOp_count.Tiempo.tolist()
+
+	complej = dfcomplej[dfcomplej['Tipo'] == 'FuncionComplej']
+	complej_count = complej.groupby('cantNod').mean() * 46
+	ListComp = complej_count.Tiempo.tolist()
+
+	dataf1 = pd.DataFrame({'S1': List1, 'S2': List2, 'S3': List3, 'S4': List4, 'O(n^2 log(n))': ListComp, 'CantVertices': enes})
 	dataf1.astype(float)
 	dataf1.plot(title='', x='CantVertices', logy=True)
 	# dataf1.plot(title='', x='CantVertices', logy=True, kind='scatter', colorbar=True)
@@ -43,6 +55,7 @@ def main():
 
 	plt.show()
 
+expPeter()
 
 
 
