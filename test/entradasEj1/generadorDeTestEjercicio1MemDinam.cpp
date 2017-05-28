@@ -24,10 +24,10 @@ int main ()
     int aux = n* 3 ;
     int m =  rand() % aux + 1;
 
-    int o = rand() % n + 1;
-    int d = rand() % n + 1;
+    int o = rand() % n;
+    int d = rand() % n;
     if(d == o) o = d-1; // por si tengo la mala leche de que me salgan la misma ciudad.
-    
+    if(o == -1 ) o = 2;
     int cantPremiums = rand() % m;
 
 
@@ -42,11 +42,10 @@ int main ()
     }
 
 
-    f << n <<" " << m <<" " << o << " " << d << " " << cantPremiums << endl;
+    f << n <<" " << m <<" " << o+1 << " " << d+1 << " " << cantPremiums << endl;
     for(int i = 0; i < m  ; i ++){
       int c1 = rand() % n ;
       int c2 = rand() % n ;
-      if(c1 == c2) c1 = c2-1;
       int p ;
       if(i < cantPremiums) p = 1;
       else p = 0;
@@ -60,18 +59,19 @@ int main ()
       }
       else{
         bool cambio = false;
-        while(cambio == false)
-        for(int c2aux = 0; c2aux < n; c2aux++){
-          if(matriz[c1][c2aux]== -1){
-            c2 = c2aux;
-            matriz[c1][c2] = 1;
-            matriz[c2][c1] = 1;
-            f << c1+1 << " " << c2+1 << " " << p << " " << dist << endl;
-            cambio = true;
-            break;
-          }
-          c1 = (c1+1) % n;
-        }
+        while(!cambio){
+	        for(int i = 0; i < n; i++){
+	          if(matriz[c1][i]== -1 && c1 != i){
+	            c2 = i;
+	            matriz[c1][c2] = 1;
+	            matriz[c2][c1] = 1;
+	            f << c1+1 << " " << c2+1 << " " << p << " " << dist << endl;
+	            cambio = true;
+	            break;
+	          }
+	        }
+	        c1 = (c1+1) % n;
+    	}
 
 
 
